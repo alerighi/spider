@@ -28,10 +28,6 @@ public class Spider extends JFrame {
         setVisible(true);
     }
 
-    public static void main(String args[]) {
-        new Spider();
-    }
-
     private void loadGame() {
         throw new NotImplementedException();
     }
