@@ -3,36 +3,33 @@ package it.alerighi.spider;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import javax.swing.*;
-import java.awt.*;
 
 /**
  * Finestra principale del programma
  *
  * @author Alessandro Righi
  */
-public class MainWindow extends JFrame {
+public class Spider extends JFrame {
 
     private static final String TITLE = "Spider";
+    private static final int WIN_WIDTH = 1500;
+    private static final int WIN_HEIGHT = 800;
     private GamePanel game;
 
-    public MainWindow() {
+    public Spider() {
         super(TITLE);
-        setLayout(new GridLayout());
-        setJMenuBar(buildMenuBar());
-        newGame(1);
+        setSize(WIN_WIDTH, WIN_HEIGHT);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setSize(((int) game.getSize().getWidth()), (int) game.getSize().getHeight() + 40);
+        setJMenuBar(buildMenuBar());
+        game = new GamePanel();
+        game.startNewGame(1);
+        setContentPane(game);
         setLocationRelativeTo(null);
         setVisible(true);
     }
 
-    private void newGame(int numberOfSuits) {
-        game = new GamePanel(numberOfSuits);
-        getContentPane().removeAll();
-        getContentPane().add(game);
-        game.setFocusable(true);
-        game.requestFocus();
-        update(getGraphics());
+    public static void main(String args[]) {
+        new Spider();
     }
 
     private void loadGame() {
@@ -51,15 +48,15 @@ public class MainWindow extends JFrame {
         JMenuItem menuNewGame = new JMenu("New Game");
 
         JMenuItem itemOneSuit = new JMenuItem("One suit");
-        itemOneSuit.addActionListener(a -> newGame(1));
+        itemOneSuit.addActionListener(a -> game.startNewGame(1));
         menuNewGame.add(itemOneSuit);
 
         JMenuItem itemTwoSuits = new JMenuItem("Two suits");
-        itemTwoSuits.addActionListener(a -> newGame(2));
+        itemTwoSuits.addActionListener(a -> game.startNewGame(2));
         menuNewGame.add(itemTwoSuits);
 
         JMenuItem itemFourSuits = new JMenuItem("Four suits");
-        itemFourSuits.addActionListener(a -> newGame(4));
+        itemFourSuits.addActionListener(a -> game.startNewGame(4));
         menuNewGame.add(itemFourSuits);
 
         gameMenu.add(menuNewGame);
@@ -83,4 +80,5 @@ public class MainWindow extends JFrame {
         menuBar.add(gameMenu);
         return menuBar;
     }
+
 }

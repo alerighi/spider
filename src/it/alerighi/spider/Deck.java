@@ -18,21 +18,12 @@ public class Deck extends ArrayList<Card> {
         getTopCard().setVisible(true);
     }
 
-    public void setIndex(int i) {
-        index = i;
-    }
-
     public int getIndex() {
         return index;
     }
 
-    public Card pop() {
-        return this.remove(this.size() - 1);
-    }
-
-    public void push(Card card) {
-        card.setVisible(true);
-        this.add(card);
+    public void setIndex(int i) {
+        index = i;
     }
 
     public Card getFirstCard() {
@@ -62,7 +53,6 @@ public class Deck extends ArrayList<Card> {
     public void paint(Graphics graphics) {
         paint(graphics, x, y);
     }
-
 
     public boolean isOrderdered(int n) {
         for (int i = n; i < size() - 1; i++) {
