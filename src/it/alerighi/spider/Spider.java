@@ -69,7 +69,7 @@ public class Spider extends JFrame {
 
         gameMenu.addSeparator();
 
-        JMenuItem itemExit = new JMenuItem("Exit");
+        JMenuItem itemExit = new JMenuItem("Quit");
         itemExit.addActionListener(a -> System.exit(0));
         gameMenu.add(itemExit);
 

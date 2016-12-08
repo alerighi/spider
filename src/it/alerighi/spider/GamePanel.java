@@ -221,10 +221,8 @@ public class GamePanel extends JPanel implements MouseListener, KeyListener {
         for (int i = 0; i < 10; i++) {
             for (int j = 0; j < topDecks[i].size(); j++) {
                 if (topDecks[i].isOrderdered(j)) {
-                    // mazzetto che posso spostare. Provo tutte le 10 posizioni
-                    Card c1 = topDecks[i].get(j);
                     for (int a = 0; a < 10; a++) {
-                        if (i != a && validMove(topDecks[a].getTopCard(), c1)) {
+                        if (i != a && validMove(topDecks[a].getTopCard(), topDecks[i].get(j))) {
                             possibleMoves.add(new Move(i, a, topDecks[i].size() - j));
                             continue mazzi;
                         }
@@ -383,9 +381,6 @@ public class GamePanel extends JPanel implements MouseListener, KeyListener {
             this.from = from;
             this.to = to;
             this.cards = cards;
-            log("Sposto " + cards + " cart" + (cards == 1 ? "a" : "e") + " dal mazzo: " +
-                    (from + 1) + " al mazzo: " + (to + 1));
-
         }
     }
 }
