@@ -179,7 +179,7 @@ public class GamePanel extends JPanel implements MouseListener, KeyListener {
             int offsetX = mouseEvent.getX() - deck.getPositionX();
             int offsetY = mouseEvent.getY() - deck.getPositionY();
             draggingDeck = deck;
-            CardDrag dragTask = new CardDrag(this, deck, offsetX, offsetY);
+            CardDrag dragTask = new CardDrag(offsetX, offsetY);
             timer = new Timer();
             timer.schedule(dragTask, 0, 10);
         }
@@ -337,25 +337,21 @@ public class GamePanel extends JPanel implements MouseListener, KeyListener {
     }
 
     private class CardDrag extends TimerTask {
-        private JPanel panel;
-        private Deck deck;
         private int offsetX, offsetY;
 
-        public CardDrag(JPanel panel, Deck deck, int x, int y) {
-            this.panel = panel;
-            this.deck = deck;
+        public CardDrag(int x, int y) {
             this.offsetX = x;
             this.offsetY = y;
         }
 
         @Override
         public void run() {
-            Point position = panel.getMousePosition();
+            Point position = getMousePosition();
             if (position != null) {
-                int mouseX = (int) panel.getMousePosition().getX() - offsetX;
-                int mouseY = (int) panel.getMousePosition().getY() - offsetY;
-                deck.setPosition(mouseX, mouseY);
-                panel.repaint();
+                int mouseX = (int) getMousePosition().getX() - offsetX;
+                int mouseY = (int) getMousePosition().getY() - offsetY;
+                draggingDeck.setPosition(mouseX, mouseY);
+                repaint();
             }
         }
     }
