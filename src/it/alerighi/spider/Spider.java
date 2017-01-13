@@ -2,7 +2,12 @@ package it.alerighi.spider;
 
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
-import javax.swing.*;
+import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.WindowConstants;
 
 /**
  * Finestra principale del programma
@@ -16,16 +21,30 @@ public class Spider extends JFrame {
     private static final int WIN_HEIGHT = 800;
     private GamePanel game;
 
+    private static final String[] GAME_MODES = {
+            "1 suit  (easy)",
+            "2 suits (medium)",
+            "4 suits (hard)"
+    };
+
     public Spider() {
         super(TITLE);
         setSize(WIN_WIDTH, WIN_HEIGHT);
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setJMenuBar(buildMenuBar());
         game = new GamePanel();
-        game.startNewGame(1);
         setContentPane(game);
         setLocationRelativeTo(null);
         setVisible(true);
+        showNewGameDialog();
+    }
+
+    private void showNewGameDialog() {
+        String selection = (String) JOptionPane.showInputDialog(null, "Choose game difficulty",
+                "New Game", JOptionPane.DEFAULT_OPTION, null, GAME_MODES, GAME_MODES[0]);
+        if (selection == null) System.exit(0);
+        int suits = Integer.parseInt(selection.split(" ")[0]);
+        game.startNewGame(suits);
     }
 
     private void loadGame() {

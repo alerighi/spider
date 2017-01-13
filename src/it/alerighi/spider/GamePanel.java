@@ -1,32 +1,36 @@
 package it.alerighi.spider;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JPanel;
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Point;
+import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.util.*;
+import java.awt.event.MouseMotionListener;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Timer;
+import java.util.Stack;
 
 import static it.alerighi.spider.Util.log;
 
 /**
- * "Lasciate ogne speranza, voi ch' entrate"
+ * Classe che va a gestire il pannello di gioco
  *
  * @author Alessandro Righi
  */
-public class GamePanel extends JPanel implements MouseListener, KeyListener {
+public class GamePanel
+        extends JPanel
+        implements MouseListener, KeyListener, MouseMotionListener {
 
     private Deck[] topDecks = new Deck[10];
 
-    private Card[][] decks = new Card[5][];
-    private int remainingDecks = 5;
+    private Card[][] decks = new Card[5][10];
+    private int remainingDecks = 0;
 
     private Deck draggingDeck = null;
-
-    private Timer timer;
 
     private Stack<Deck> removedDecks = new Stack<>();
     private Stack<Move> moves = new Stack<>();
@@ -37,43 +41,46 @@ public class GamePanel extends JPanel implements MouseListener, KeyListener {
 
     private int numberOfSuits;
 
+    private int offsetX, offsetY;
+    boolean visible;
+
 
     public GamePanel() {
         log("Questo è Spider, v0.0.1");
         addMouseListener(this);
+        addMouseMotionListener(this);
         addKeyListener(this);
         setFocusable(true);
         requestFocus();
     }
 
     public void startNewGame(int numberOfSuits) {
-        log("Inizio nuova partita");
+        log("Inizio nuova partita " + numberOfSuits);
         this.numberOfSuits = numberOfSuits;
         buildDecks(numberOfSuits);
-        removedDecks.empty();
-        moves.empty();
+        removedDecks.clear();
+        moves.clear();
         remainingDecks = 5;
         repaint();
+        possibleMoves = getPossibleMoves();
     }
 
     private void buildDecks(int numberOfSuits) {
         CardDeck cardDeck = new CardDeck(numberOfSuits, 8 / numberOfSuits);
 
         for (int i = 0; i < 5; i++) {
-            decks[i] = cardDeck.getCards(i * 10, 10);
+            decks[i] = cardDeck.getCards(i * 10, 10).toArray(decks[i]);
         }
 
         for (int i = 0; i < 4; i++) {
-            topDecks[i] = new Deck(Arrays.asList(cardDeck.getCards(50 + i * 6, 6)));
+            topDecks[i] = new Deck(cardDeck.getCards(50 + i * 6, 6));
             topDecks[i].setIndex(i);
         }
 
         for (int i = 0; i < 6; i++) {
-            topDecks[i + 4] = new Deck(Arrays.asList(cardDeck.getCards(74 + i * 5, 5)));
+            topDecks[i + 4] = new Deck(cardDeck.getCards(74 + i * 5, 5));
             topDecks[i + 4].setIndex(i + 4);
         }
-
-        possibleMoves = getPossibleMoves();
     }
 
     @Override
@@ -81,37 +88,48 @@ public class GamePanel extends JPanel implements MouseListener, KeyListener {
         super.paintComponent(graphics);
         graphics.setColor(new Color(36, 124, 33));
         graphics.fillRect(0, 0, getWidth(), getHeight());
+
+        if (remainingDecks == 0) {
+            graphics.setColor(Color.BLACK);
+            graphics.drawRect(getWidth() - 20 - Card.CARD_WIDTH, getHeight() - 20 - Card.CARD_HEIGHT, Card.CARD_WIDTH, Card.CARD_HEIGHT);
+        } else {
+            for (int i = 0; i < remainingDecks; i++) {
+                Card.drawCardBack(getWidth() - i * 10 - 20 - Card.CARD_WIDTH, getHeight() - 20 - Card.CARD_HEIGHT, graphics);
+            }
+        }
+
+        int x = getWidth() / 2 - 125;
+        int y = getHeight() - 20 - 125;
+        graphics.setColor(new Color(35, 104, 32));
+        graphics.fillRect(x, y, 250, 125);
+        graphics.setColor(Color.black);
+        graphics.drawRect(x, y, 250, 125);
+        graphics.setFont(graphics.getFont().deriveFont(graphics.getFont().getSize() * 1.4F));
+        if (numberOfSuits == 0) {
+            graphics.drawString("Select Game Mode!", x + 23, y + 45);
+        } else if (isEnded()) {
+            graphics.drawString("Congratulations, you won!", x + 10, y + 45);
+        } else {
+            graphics.drawString("Score: " + score, x + 60, y + 45);
+            graphics.drawString("Moves: " + moves.size(), x + 60, y + 75);
+        }
+
+        if (numberOfSuits == 0) return; // gioco non ancora inizzializzato;;
+
         int spaceBetweenCards = (getWidth() - 10 * Card.CARD_WIDTH) / 11;
         for (int i = 0; i < 10; i++) {
             topDecks[i].setPosition(spaceBetweenCards * (i + 1) + Card.CARD_WIDTH * i, 20);
             topDecks[i].paint(graphics);
         }
 
-        for (int i = 0; i < remainingDecks; i++) {
-            Card.drawCardBack(getWidth() - i * 10 - 20 - Card.CARD_WIDTH, getHeight() - 20 - Card.CARD_HEIGHT, graphics);
-        }
-
-        int x = 20;
-        int y = getHeight() - Card.CARD_HEIGHT - 20;
+        x = 20;
+        y = getHeight() - Card.CARD_HEIGHT - 20;
         for (Deck d : removedDecks) {
             d.getFirstCard().setPosition(x, y);
             d.getFirstCard().drawCard(graphics);
             x += 20;
         }
 
-        x = getWidth() / 2 - 125;
-        y = getHeight() - 20 - 125;
-        graphics.setColor(new Color(35, 104, 32));
-        graphics.fillRect(x, y, 250, 125);
-        graphics.setColor(Color.black);
-        graphics.drawRect(x, y, 250, 125);
-        graphics.setFont(graphics.getFont().deriveFont(graphics.getFont().getSize() * 1.4F));
-        if (isEnded()) {
-            graphics.drawString("Complimenti! Hai vinto!", x + 23, y + 45);
-        } else {
-            graphics.drawString("Score: " + score, x + 60, y + 45);
-            graphics.drawString("Moves: " + moves.size(), x + 60, y + 75);
-        }
 
         if (draggingDeck != null) {
             draggingDeck.paint(graphics);
@@ -176,20 +194,16 @@ public class GamePanel extends JPanel implements MouseListener, KeyListener {
         }
         Deck deck = popDeckOnLocation(mouseEvent.getX(), mouseEvent.getY());
         if (deck != null) {
-            int offsetX = mouseEvent.getX() - deck.getPositionX();
-            int offsetY = mouseEvent.getY() - deck.getPositionY();
+            offsetX = mouseEvent.getX() - deck.getPositionX();
+            offsetY = mouseEvent.getY() - deck.getPositionY();
             draggingDeck = deck;
-            CardDrag dragTask = new CardDrag(offsetX, offsetY);
-            timer = new Timer();
-            timer.schedule(dragTask, 0, 10);
+            visible = topDecks[deck.getIndex()].getTopCard() != null && topDecks[deck.getIndex()].getTopCard().isVisible();
         }
     }
 
     @Override
     public void mouseReleased(MouseEvent mouseEvent) {
         if (draggingDeck != null) {
-            timer.cancel();
-            timer = null;
             Deck deck = selectDeckOnLocation(mouseEvent.getX(), mouseEvent.getY());
             if (deck != null) {
                 deck = topDecks[deck.getIndex()];
@@ -217,14 +231,12 @@ public class GamePanel extends JPanel implements MouseListener, KeyListener {
 
     private List<Move> getPossibleMoves() {
         List<Move> possibleMoves = new ArrayList<>();
-        mazzi:
         for (int i = 0; i < 10; i++) {
             for (int j = 0; j < topDecks[i].size(); j++) {
-                if (topDecks[i].isOrderdered(j)) {
+                if (topDecks[i].isOrderdered(j) && topDecks[i].get(j).isVisible()) {
                     for (int a = 0; a < 10; a++) {
                         if (i != a && validMove(topDecks[a].getTopCard(), topDecks[i].get(j))) {
                             possibleMoves.add(new Move(i, a, topDecks[i].size() - j));
-                            continue mazzi;
                         }
                     }
                 }
@@ -271,6 +283,7 @@ public class GamePanel extends JPanel implements MouseListener, KeyListener {
         if (toUndo.dealCards) {
             for (int i = 0; i < 10; i++) {
                 topDecks[i].getSubDeck(topDecks[i].size() - 1, true);
+                if (topDecks[i].getTopCard() != null) topDecks[i].getTopCard().setVisible(true);
             }
             remainingDecks++;
             repaint();
@@ -278,7 +291,7 @@ public class GamePanel extends JPanel implements MouseListener, KeyListener {
         }
         Deck from = topDecks[toUndo.to];
         Deck to = topDecks[toUndo.from];
-        if (to.getTopCard() != null) to.getTopCard().setVisible(false);
+        if (!visible && to.getTopCard() != null) to.getTopCard().setVisible(false);
         Deck toMove = from.getSubDeck(from.size() - toUndo.cards, true);
         to.addAll(toMove);
         repaint();
@@ -322,11 +335,11 @@ public class GamePanel extends JPanel implements MouseListener, KeyListener {
     @Override
     public void keyPressed(KeyEvent keyEvent) {
         if (!moves.isEmpty()
-                && (keyEvent.getModifiers() & KeyEvent.CTRL_MASK) != 0
+                && (keyEvent.getModifiers() & Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()) != 0
                 && keyEvent.getKeyCode() == KeyEvent.VK_Z)
             undo();
         if (!possibleMoves.isEmpty()
-                && (keyEvent.getModifiers() & KeyEvent.CTRL_MASK) != 0
+                && (keyEvent.getModifiers() & Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()) != 0
                 && keyEvent.getKeyCode() == KeyEvent.VK_H)
             getHint();
 
@@ -336,24 +349,21 @@ public class GamePanel extends JPanel implements MouseListener, KeyListener {
     public void keyReleased(KeyEvent keyEvent) {
     }
 
-    private class CardDrag extends TimerTask {
-        private int offsetX, offsetY;
-
-        public CardDrag(int x, int y) {
-            this.offsetX = x;
-            this.offsetY = y;
-        }
-
-        @Override
-        public void run() {
+    @Override
+    public void mouseDragged(MouseEvent e) {
+        if (draggingDeck != null) {
             Point position = getMousePosition();
             if (position != null) {
                 int mouseX = (int) getMousePosition().getX() - offsetX;
                 int mouseY = (int) getMousePosition().getY() - offsetY;
-                draggingDeck.setPosition(mouseX, mouseY);
+                if (draggingDeck != null) draggingDeck.setPosition(mouseX, mouseY);
                 repaint();
             }
         }
+    }
+
+    @Override
+    public void mouseMoved(MouseEvent e) {
     }
 
     private class Move {
