@@ -10,7 +10,7 @@ public class Util {
     }
 
     // indica se è attiva la modalità debug
-    public static final boolean DEBUG = true;
+    public static final boolean DEBUG = false;
 
     static {
 
