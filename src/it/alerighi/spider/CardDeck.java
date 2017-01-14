@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Random;
 
 /**
- * Classe che rappresenta un mazzo di carte da pocker
+ * Classe che rappresenta un mazzo contentente più mazzi di carte francesi.
  *
  * @author Alessandro Righi
  */
@@ -23,7 +23,7 @@ public class CardDeck {
         this.numberOfSuits = numberOfSuits;
         this.numberOfCards = numberOfSuits * numberOfDecks * 13;
         buildDeck();
-        shuffle(1000);
+        shuffle();
     }
 
     public List<Card> getCards(int start, int end) {
@@ -51,10 +51,10 @@ public class CardDeck {
         }
     }
 
-    private void shuffle(int passages) {
+    private void shuffle() {
         Random rand = new Random();
 
-        for (int i = 0; i < passages; i++) {
+        for (int i = 0; i < 1000; i++) {
             int a = rand.nextInt(numberOfCards);
             int b = rand.nextInt(numberOfCards);
             swap(a, b);

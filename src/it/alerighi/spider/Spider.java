@@ -1,7 +1,5 @@
 package it.alerighi.spider;
 
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
-
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -16,43 +14,43 @@ import javax.swing.WindowConstants;
  */
 public class Spider extends JFrame {
 
-    private static final String TITLE = "Spider";
+    // stringhe che indicano versione e nome del programma
+    public static final String VERSION = "v1.0.0";
+    public static final String NAME = "Spider";
+
+    // dati riguardanti la finestra
+    private static final String TITLE = NAME + " " + VERSION;
     private static final int WIN_WIDTH = 1500;
     private static final int WIN_HEIGHT = 800;
-    private GamePanel game;
 
-    private static final String[] GAME_MODES = {
-            "1 suit  (easy)",
-            "2 suits (medium)",
-            "4 suits (hard)"
-    };
+    // l'oggetto che rappresenta il pannello di gioco
+    private GamePanel gamePanel;
 
     public Spider() {
-        super(TITLE);
+        new Thread(Card::loadCardImages).start(); // carica le carte in un thread separato, velocizza avvio!
+        setTitle(TITLE);
         setSize(WIN_WIDTH, WIN_HEIGHT);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setJMenuBar(buildMenuBar());
-        game = new GamePanel();
-        setContentPane(game);
+        gamePanel = new GamePanel();
+        setContentPane(gamePanel);
         setLocationRelativeTo(null);
         setVisible(true);
         showNewGameDialog();
     }
 
     private void showNewGameDialog() {
+        final String[] GAME_MODES = {
+                "1 suit  (easy)",
+                "2 suits (medium)",
+                "4 suits (hard)"
+        };
+
         String selection = (String) JOptionPane.showInputDialog(null, "Choose game difficulty",
                 "New Game", JOptionPane.DEFAULT_OPTION, null, GAME_MODES, GAME_MODES[0]);
         if (selection == null) System.exit(0);
-        int suits = Integer.parseInt(selection.split(" ")[0]);
-        game.startNewGame(suits);
-    }
-
-    private void loadGame() {
-        throw new NotImplementedException();
-    }
-
-    private void saveGame() {
-        throw new NotImplementedException();
+        int suits = Character.getNumericValue(selection.charAt(0));
+        gamePanel.startNewGame(suits);
     }
 
     private JMenuBar buildMenuBar() {
@@ -63,27 +61,27 @@ public class Spider extends JFrame {
         JMenuItem menuNewGame = new JMenu("New Game");
 
         JMenuItem itemOneSuit = new JMenuItem("One suit");
-        itemOneSuit.addActionListener(a -> game.startNewGame(1));
+        itemOneSuit.addActionListener(a -> gamePanel.startNewGame(1));
         menuNewGame.add(itemOneSuit);
 
         JMenuItem itemTwoSuits = new JMenuItem("Two suits");
-        itemTwoSuits.addActionListener(a -> game.startNewGame(2));
+        itemTwoSuits.addActionListener(a -> gamePanel.startNewGame(2));
         menuNewGame.add(itemTwoSuits);
 
         JMenuItem itemFourSuits = new JMenuItem("Four suits");
-        itemFourSuits.addActionListener(a -> game.startNewGame(4));
+        itemFourSuits.addActionListener(a -> gamePanel.startNewGame(4));
         menuNewGame.add(itemFourSuits);
 
         gameMenu.add(menuNewGame);
 
         gameMenu.addSeparator();
 
-        JMenuItem itemSaveGame = new JMenuItem("Save Game");
-        itemSaveGame.addActionListener(a -> saveGame());
+        JMenuItem itemSaveGame = new JMenuItem("Deal cards");
+        itemSaveGame.addActionListener(a -> gamePanel.dealCards());
         gameMenu.add(itemSaveGame);
 
-        JMenuItem itemLoadGame = new JMenuItem("Load Game");
-        itemLoadGame.addActionListener(a -> loadGame());
+        JMenuItem itemLoadGame = new JMenuItem("Hint");
+        itemLoadGame.addActionListener(a -> gamePanel.getHint());
         gameMenu.add(itemLoadGame);
 
         gameMenu.addSeparator();

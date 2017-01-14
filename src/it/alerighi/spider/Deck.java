@@ -6,12 +6,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * Classe che rappresenta un mazzo di carte
+ *
  * @author Alessandro Righi
  */
 public class Deck extends ArrayList<Card> {
 
-    private int x = 0;
-    private int y = 0;
+    private int positionX = 0;
+    private int positionY = 0;
     private int index = 0;
 
     public Deck(List<Card> list) {
@@ -40,8 +42,10 @@ public class Deck extends ArrayList<Card> {
     public void paint(Graphics graphics, int x, int y) {
         setPosition(x, y);
         if (isEmpty()) {
+            graphics.setColor(GamePanel.SCORE_BOX_COLOR);
+            graphics.fillRect(x, y, Card.WIDTH, Card.HEIGHT);
             graphics.setColor(Color.BLACK);
-            graphics.drawRect(x, y, Card.CARD_WIDTH, Card.CARD_HEIGHT);
+            graphics.drawRect(x, y, Card.WIDTH, Card.HEIGHT);
         } else {
             for (Card card : this) {
                 card.setPosition(x, y);
@@ -52,7 +56,7 @@ public class Deck extends ArrayList<Card> {
     }
 
     public void paint(Graphics graphics) {
-        paint(graphics, x, y);
+        paint(graphics, positionX, positionY);
     }
 
     public boolean isOrderdered(int n) {
@@ -75,23 +79,23 @@ public class Deck extends ArrayList<Card> {
     }
 
     public void setPosition(int x, int y) {
-        this.x = x;
-        this.y = y;
+        this.positionX = x;
+        this.positionY = y;
     }
 
     public Deck selectSubDeck(int a, int b, boolean pop) {
         if (this.size() == 0) {
-            if (a > x && a < x + Card.CARD_WIDTH && b > 20 && b < Card.CARD_HEIGHT + 20)
+            if (a > positionX && a < positionX + Card.WIDTH && b > 20 && b < Card.HEIGHT + 20)
                 return this;
             else
                 return null;
         }
         int y = this.getTopCard().getPositionY();
-        int x = this.x;
+        int x = this.positionX;
         int i;
         for (i = size() - 1; i >= 0; i--) {
             Card card = this.get(i);
-            if (a > x && a < x + Card.CARD_WIDTH && b > y && b < y + Card.CARD_HEIGHT && card.isVisible())
+            if (a > x && a < x + Card.WIDTH && b > y && b < y + Card.HEIGHT && card.isVisible())
                 break;
             y -= card.isVisible() ? 30 : 10;
         }
@@ -112,11 +116,11 @@ public class Deck extends ArrayList<Card> {
     }
 
     public int getPositionX() {
-        return x;
+        return positionX;
     }
 
     public int getPositionY() {
-        return y;
+        return positionY;
     }
 }
 

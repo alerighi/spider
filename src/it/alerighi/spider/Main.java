@@ -2,6 +2,8 @@ package it.alerighi.spider;
 
 import javax.swing.UIManager;
 
+import static it.alerighi.spider.Util.*;
+
 /**
  * Classe Main dell'applicazione
  *
@@ -16,6 +18,7 @@ public class Main {
      * @param args argomenti da riga di comando
      */
     public static void main(String args[]) {
+        info("This is " + Spider.NAME + " version " + Spider.VERSION);
 
         // proprietà necessarie per la barra dei menù in macOS
         System.setProperty("apple.awt.application.name", "Spider");

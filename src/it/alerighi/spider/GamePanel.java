@@ -1,10 +1,7 @@
 package it.alerighi.spider;
 
 import javax.swing.JPanel;
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Point;
-import java.awt.Toolkit;
+import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
@@ -14,10 +11,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
-import static it.alerighi.spider.Util.log;
+import static it.alerighi.spider.Util.*;
 
 /**
- * Classe che va a gestire il pannello di gioco
+ * Classe che gestisce il pannello del gioco
  *
  * @author Alessandro Righi
  */
@@ -35,18 +32,21 @@ public class GamePanel
     private Stack<Deck> removedDecks = new Stack<>();
     private Stack<Move> moves = new Stack<>();
 
-    private int score = 0;
+    private int score;
 
     private List<Move> possibleMoves;
 
     private int numberOfSuits;
 
     private int offsetX, offsetY;
-    boolean visible;
+    private boolean visible;
+
+    // Colori dello sfondo del gioco, e dello sfondo della finestra punteggi
+    public static final Color BACKGROUND_COLOR = new Color(35, 104, 32);
+    public static final Color SCORE_BOX_COLOR = new Color(33, 79, 33);
 
 
     public GamePanel() {
-        log("Questo è Spider, v0.0.1");
         addMouseListener(this);
         addMouseMotionListener(this);
         addKeyListener(this);
@@ -55,12 +55,13 @@ public class GamePanel
     }
 
     public void startNewGame(int numberOfSuits) {
-        log("Inizio nuova partita " + numberOfSuits);
+        debug("Starting new game " + numberOfSuits);
         this.numberOfSuits = numberOfSuits;
         buildDecks(numberOfSuits);
         removedDecks.clear();
         moves.clear();
         remainingDecks = 5;
+        score = 500;
         repaint();
         possibleMoves = getPossibleMoves();
     }
@@ -84,23 +85,27 @@ public class GamePanel
     }
 
     @Override
-    protected void paintComponent(Graphics graphics) {
-        super.paintComponent(graphics);
-        graphics.setColor(new Color(36, 124, 33));
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        Graphics2D graphics = (Graphics2D) g;
+
+        graphics.setColor(BACKGROUND_COLOR);
         graphics.fillRect(0, 0, getWidth(), getHeight());
 
         if (remainingDecks == 0) {
+            graphics.setColor(SCORE_BOX_COLOR);
+            graphics.fillRect(getWidth() - 20 - Card.WIDTH, getHeight() - 20 - Card.HEIGHT, Card.WIDTH, Card.HEIGHT);
             graphics.setColor(Color.BLACK);
-            graphics.drawRect(getWidth() - 20 - Card.CARD_WIDTH, getHeight() - 20 - Card.CARD_HEIGHT, Card.CARD_WIDTH, Card.CARD_HEIGHT);
+            graphics.drawRect(getWidth() - 20 - Card.WIDTH, getHeight() - 20 - Card.HEIGHT, Card.WIDTH, Card.HEIGHT);
         } else {
             for (int i = 0; i < remainingDecks; i++) {
-                Card.drawCardBack(getWidth() - i * 10 - 20 - Card.CARD_WIDTH, getHeight() - 20 - Card.CARD_HEIGHT, graphics);
+                Card.drawCardBack(getWidth() - i * 10 - 20 - Card.WIDTH, getHeight() - 20 - Card.HEIGHT, graphics);
             }
         }
 
         int x = getWidth() / 2 - 125;
         int y = getHeight() - 20 - 125;
-        graphics.setColor(new Color(35, 104, 32));
+        graphics.setColor(SCORE_BOX_COLOR);
         graphics.fillRect(x, y, 250, 125);
         graphics.setColor(Color.black);
         graphics.drawRect(x, y, 250, 125);
@@ -108,7 +113,9 @@ public class GamePanel
         if (numberOfSuits == 0) {
             graphics.drawString("Select Game Mode!", x + 23, y + 45);
         } else if (isEnded()) {
-            graphics.drawString("Congratulations, you won!", x + 10, y + 45);
+            graphics.drawString("Congratulations, you won!", x + 20, y + 45);
+            graphics.drawString("Final score: " + score, x + 20, y + 75);
+
         } else {
             graphics.drawString("Score: " + score, x + 60, y + 45);
             graphics.drawString("Moves: " + moves.size(), x + 60, y + 75);
@@ -116,14 +123,14 @@ public class GamePanel
 
         if (numberOfSuits == 0) return; // gioco non ancora inizzializzato;;
 
-        int spaceBetweenCards = (getWidth() - 10 * Card.CARD_WIDTH) / 11;
+        int spaceBetweenCards = (getWidth() - 10 * Card.WIDTH) / 11;
         for (int i = 0; i < 10; i++) {
-            topDecks[i].setPosition(spaceBetweenCards * (i + 1) + Card.CARD_WIDTH * i, 20);
+            topDecks[i].setPosition(spaceBetweenCards * (i + 1) + Card.WIDTH * i, 20);
             topDecks[i].paint(graphics);
         }
 
         x = 20;
-        y = getHeight() - Card.CARD_HEIGHT - 20;
+        y = getHeight() - Card.HEIGHT - 20;
         for (Deck d : removedDecks) {
             d.getFirstCard().setPosition(x, y);
             d.getFirstCard().drawCard(graphics);
@@ -162,15 +169,17 @@ public class GamePanel
     public void mouseClicked(MouseEvent mouseEvent) {
     }
 
-    private void dealCards() {
+    public void dealCards() {
+        if (remainingDecks <= 0) return;
         for (Deck d : topDecks) {
             if (d.isEmpty()) {
-                log("Non posso dispensare le carte. È presente un buco!");
+                debug("Non posso dispensare le carte. È presente un buco!");
                 return;
             }
         }
         remainingDecks--;
-        log("Dispenso carte: mazzi rimanenti " + remainingDecks);
+        score -= 1;
+        debug("Dispenso carte: mazzi rimanenti " + remainingDecks);
         for (int i = 0; i < 10; i++) {
             decks[remainingDecks][i].setVisible(true);
             topDecks[i].add(decks[remainingDecks][i]);
@@ -211,11 +220,14 @@ public class GamePanel
                     Card c = topDecks[draggingDeck.getIndex()].getTopCard();
                     if (c != null) c.setVisible(true);
                     deck.addAll(draggingDeck);
-                    moves.push(new Move(draggingDeck.getIndex(), deck.getIndex(), draggingDeck.size()));
+                    Move m = new Move(draggingDeck.getIndex(), deck.getIndex(), draggingDeck.size());
+                    m.visible = visible;
+                    moves.push(m);
                     repaint();
                     check();
                     possibleMoves = getPossibleMoves();
                     draggingDeck = null;
+                    score -= 1;
                     return;
                 }
             }
@@ -245,33 +257,44 @@ public class GamePanel
         return possibleMoves;
     }
 
-    private void getHint() {
+    public void getHint() {
         if (!possibleMoves.isEmpty()) {
             try {
                 Move move = possibleMoves.remove(0);
                 possibleMoves.add(move);
-                topDecks[move.from].get(topDecks[move.from].size() - move.cards).setFlagged(true);
-                paintComponent(getGraphics());
-                Thread.sleep(300);
-                topDecks[move.from].get(topDecks[move.from].size() - move.cards).setFlagged(false);
-                paintComponent(getGraphics());
-                if (topDecks[move.to].getTopCard() != null) {
-                    topDecks[move.to].getTopCard().setFlagged(true);
-                    paintComponent(getGraphics());
+
+                Graphics g = getGraphics();
+                g.setColor(Color.BLACK); // TODO: colore in una variabile separata
+
+                Deck d = topDecks[move.from];
+                Card c = d.get(d.size() - move.cards);
+                g.fillRect(c.getPositionX(), c.getPositionY(), Card.WIDTH, Card.HEIGHT+move.cards*30-30);
+
+                Thread.sleep(400);
+                d.paint(getGraphics());
+
+                d = topDecks[move.to];
+                c = d.getTopCard();
+                if (c != null) {
+                    g.fillRect(c.getPositionX(), c.getPositionY(), Card.WIDTH, Card.HEIGHT);
                 } else {
-                    getGraphics().fillRect(topDecks[move.to].getPositionX(), topDecks[move.to].getPositionY(),
-                            Card.CARD_WIDTH, Card.CARD_HEIGHT);
+                    g.fillRect(d.getPositionX(), d.getPositionY(), Card.WIDTH, Card.HEIGHT);
                 }
-                Thread.sleep(300);
-                if (topDecks[move.to].getTopCard() != null) topDecks[move.to].getTopCard().setFlagged(false);
-                paintComponent(getGraphics());
+                Thread.sleep(400);
+                if (c != null) {
+                    c.drawCard(getGraphics());
+                } else {
+                    g.setColor(BACKGROUND_COLOR);
+                    g.fillRect(d.getPositionX(), d.getPositionY(), Card.WIDTH, Card.HEIGHT);
+                }
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                err("This shouldn't have ever happened!");
             }
         }
     }
 
     private void undo() {
+        score -= 1;
         Move toUndo = moves.pop();
         if (toUndo.removedDeck > 0) {
             if (!toUndo.visible) {
@@ -291,7 +314,7 @@ public class GamePanel
         }
         Deck from = topDecks[toUndo.to];
         Deck to = topDecks[toUndo.from];
-        if (!visible && to.getTopCard() != null) to.getTopCard().setVisible(false);
+        if (!toUndo.visible && to.getTopCard() != null) to.getTopCard().setVisible(false);
         Deck toMove = from.getSubDeck(from.size() - toUndo.cards, true);
         to.addAll(toMove);
         repaint();
@@ -308,12 +331,13 @@ public class GamePanel
                     moves.push(new Move(j, d.size() <= 0 || d.getTopCard().isVisible()));
                     Card c2 = d.getTopCard();
                     if (c2 != null) c2.setVisible(true);
-                    log("Congratulazioni. Rimosso un mazzetto.");
+                    score += 100;
+                    debug("Congratulazioni. Rimosso un mazzetto.");
                 }
             }
         }
         if (removedDecks.size() == 8) {
-            log("Partita terminata");
+            debug("Partita terminata");
             repaint();
             return true;
         }
