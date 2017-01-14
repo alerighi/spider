@@ -1,4 +1,4 @@
-# spider
+# Spider
 Implementation in Java of the famous Spider game, included in Microsoft Windows.
 
 ### Usage
