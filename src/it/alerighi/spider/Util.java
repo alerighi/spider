@@ -9,15 +9,14 @@ public class Util {
     private Util() {
     }
 
-    // indica se è attiva la modalità debug
-    public static final boolean DEBUG = false;
+    /**
+     * indica se è attiva la modalità debug
+     */
+    private static final boolean DEBUG = true;
 
     static {
-
-        // stampo un messaggio se la modalità debug è attiva
-        if (DEBUG) {
+        if (DEBUG)
             warn("Debug mode activated!");
-        }
     }
 
     /**
@@ -35,10 +34,8 @@ public class Util {
      *
      */
     public static void debug(String message) {
-        if (DEBUG) {
+        if (DEBUG)
             System.out.println("[Debug] " + message);
-        }
-
     }
 
     /**

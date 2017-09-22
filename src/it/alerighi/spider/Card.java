@@ -1,52 +1,44 @@
 package it.alerighi.spider;
 
 import javax.imageio.ImageIO;
-import java.awt.Graphics;
-import java.awt.Image;
+import java.awt.*;
 import java.io.IOException;
 
-import static it.alerighi.spider.Util.*;
+import static it.alerighi.spider.Util.err;
+import static it.alerighi.spider.Util.info;
 
 /**
- * Classe che rappresenta una carta da gioco francese.
+ * Classe che rappresenta una carta da gioco.
  *
  * @author Alessandro Righi
  */
 public class Card {
 
-    // dimensioni di una carta
+    /**
+     * card HEIGHT
+     */
     public static final int HEIGHT = 145;
-    public static final int WIDTH = 100;
-
-    // nomi dei semi
-    private static final String[] SUITS = {"spades", "hearts", "clubs", "diamonds"};
-    private static final String[] VALUES = {"ace", "2", "3", "4", "5", "6", "7", "8", "9", "10", "jack", "queen", "king"};
-
-    // Immagini delle carte
-    private static Image[] cardsImages = new Image[52];
-    private static Image back;
-
-    // variabile che indica se la classe è inizzializzata
-    private static boolean initialized = false;
-
-    // valore della carta, da 0 a 52
-    private final int value;
-
-    // posizione della carta sullo schermo
-    private int positionX;
-    private int positionY;
-
-    // indica se la carta è visibile o coperta
-    private boolean visible = false;
 
     /**
-     * Metodo statico che inizzializza la classe, caricando le immagini delle carte nel rispettivo array.
-     * Deve essere richiamato prima di utilizzare la classe (il costruttore lo richiama comunque)
+     * card WIDTH
      */
-    public static void loadCardImages() {
+    public static final int WIDTH = 100;
+
+    /** array dei nomi dei semi */
+    private static final String[] SUITS = {"spades", "hearts", "clubs", "diamonds"};
+
+    /** array dei valori delle carte */
+    private static final String[] VALUES = {"ace", "2", "3", "4", "5", "6", "7", "8", "9", "10", "jack", "queen", "king"};
+
+    /** immagini delle carte */
+    private static Image[] cardsImages = new Image[52];
+
+    /** immagine del retro di una carta */
+    private static Image back;
+
+    static {
         info("Loading images from resource files...");
         try {
-
             // carico le immagini delle carte normali nell'array cardsImages, una ad una
             int i = 0;
             for (String suit : SUITS) {
@@ -58,14 +50,29 @@ public class Card {
 
             // carico l'immagine del dorsetto della carta
             back = ImageIO.read(Card.class.getResourceAsStream("back.png"));
-
         } catch (IOException e) {
             err("Errore nel caricamento immagini delle carte!");
         }
 
-        initialized = true;
         info("Done loading card images");
     }
+
+    /**
+     * valore della carta, da 0 a 52
+     */
+    private final int value;
+    /**
+     * posizione X della carta su schermo
+     */
+    private int positionX;
+    /**
+     * posizione Y della carta su schermo
+     */
+    private int positionY;
+    /**
+     * indica se la carta è visibile o coperta
+     */
+    private boolean isVisible = false;
 
     /**
      * Costruttore di una carta
@@ -74,9 +81,6 @@ public class Card {
      * @param value valore numerico della carta (1-11)
      */
     public Card(int suit, int value) {
-        if (!initialized) {
-            loadCardImages();
-        }
         if (value < 1 || value > 13 || suit < 0 || suit > 3) {
             throw new IllegalArgumentException("Suit or value out of bounds!");
         }
@@ -86,13 +90,11 @@ public class Card {
     /**
      * Metodo statico che disegna il retro di una carta alla posizione specificata
      *
-     * @param x coordinata X dove disegnata
+     * @param x coordinata X dove disegnare
      * @param y coordinata Y dove disegnare
      * @param graphics l'oggetto grafico su cui disegnare
      */
     public static void drawCardBack(int x, int y, Graphics graphics) {
-        if (!initialized)
-            loadCardImages();
         graphics.drawImage(back, x, y, WIDTH, HEIGHT, null);
     }
 
@@ -102,7 +104,7 @@ public class Card {
      * @param graphics l'area grafica su cui disegnare
      */
     public void drawCard(Graphics graphics) {
-        if (visible) {
+        if (isVisible) {
             graphics.drawImage(cardsImages[value], positionX, positionY, WIDTH, HEIGHT, null);
         } else {
             drawCardBack(positionX, positionY, graphics);
@@ -114,45 +116,87 @@ public class Card {
         return getValueAsString() + " of " + getSuitAsString();
     }
 
-    /*
-     * Getters/setters vari
+    /**
+     * Ottiene la posizione X della carta
+     *
+     * @return posizione X della carta
      */
-
     public int getPositionX() {
         return positionX;
     }
 
+    /**
+     * Ottiene la posizione Y della carta
+     *
+     * @return posizione Y della carta
+     */
     public int getPositionY() {
         return positionY;
     }
 
+    /**
+     * Setta la posizione della carta
+     *
+     * @param x coordinata X
+     * @param y coordinata Y
+     */
     public void setPosition(int x, int y) {
         this.positionX = x;
         this.positionY = y;
     }
 
+    /**
+     * Ottiene il seme della carta
+     *
+     * @return seme della carta
+     */
     public int getSuit() {
         return this.value / 13;
     }
 
+    /**
+     * Ottiene il seme della carta come stringa
+     *
+     * @return seme della carta come stringa
+     */
     public String getSuitAsString() {
         return SUITS[getSuit()];
     }
 
+    /**
+     * Ottiene il valore della carta
+     *
+     * @return valore della carta
+     */
     public int getValue() {
         return this.value % 13 + 1;
     }
 
+    /**
+     * Ottiene il valore della carta come stringa
+     *
+     * @return valore della carta come stringa
+     */
     public String getValueAsString() {
         return VALUES[getValue() - 1];
     }
 
+    /**
+     * Ritorna true se la carta è visibile
+     *
+     * @return true se la carta è visibile
+     */
     public boolean isVisible() {
-        return visible;
+        return isVisible;
     }
 
+    /**
+     * Setta la carta visibile in base al valore specificato
+     *
+     * @param val true setta la carta visibile, false la nasconde
+     */
     public void setVisible(boolean val) {
-        this.visible = val;
+        this.isVisible = val;
     }
 
 }
