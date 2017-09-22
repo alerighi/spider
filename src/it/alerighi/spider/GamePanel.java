@@ -30,7 +30,7 @@ public class GamePanel extends JPanel {
     /**
      * colore con cui sono evidenziate le carte dei suggerimenti
      */
-    public static final Color HINT_COLOR = new Color(80, 12, 15);
+    public static final Color HINT_COLOR = new Color(10, 27, 50);
 
     /**
      * array dei 10 mazzi superiori del gioco
@@ -45,7 +45,7 @@ public class GamePanel extends JPanel {
     /**
      * numero di deck di carte da distribuire rimanenti
      */
-    private int remainingDecks = 0;
+    private int remainingDecks;
 
     /**
      * deck di carte che il giocatore sta spostando
@@ -172,7 +172,6 @@ public class GamePanel extends JPanel {
         graphics.fillRect(x, y, 120, 60);
         graphics.setColor(Color.BLACK);
         graphics.drawRect(x, y, 120, 60);
-
         graphics.drawString("UNDO", x + 30, y + 35);
 
     }
@@ -235,7 +234,6 @@ public class GamePanel extends JPanel {
      * Disegna il campo di gioco
      *
      * @param g area grafica in cui disegnare
-     *          TODO: spezzare il codice in più funzioni
      */
     @Override
     protected void paintComponent(Graphics g) {
@@ -464,14 +462,6 @@ public class GamePanel extends JPanel {
         }
     }
 
-    private void printRecipt() {
-        System.out.println("--- Storico delle mosse partita ---");
-        for (Move move : moves)
-            System.out.println(move);
-        System.out.println("--- END ---");
-    }
-
-
     /**
      * Classe per gestire gli eventi del mouse
      */
@@ -481,24 +471,31 @@ public class GamePanel extends JPanel {
         public void mousePressed(MouseEvent mouseEvent) {
             int x = mouseEvent.getX();
             int y = mouseEvent.getY();
+
             if (isInUndoRect(x, y))
                 undoLastMove();
 
-            if (mouseEvent.getX() > getWidth() / 2 - 125 && mouseEvent.getX() < getWidth() / 2 + 125
-                    && mouseEvent.getY() > getHeight() - 145 && mouseEvent.getY() < getHeight() - 20) {
+            if (x > getWidth() / 2 - 125
+                    && x < getWidth() / 2 + 125
+                    && y > getHeight() - 145
+                    && y < getHeight() - 20) {
                 if (isEnded())
                     startNewGame(numberOfSuits);
                 else
                     getHint();
             }
-            if (mouseEvent.getX() > getWidth() - 200 && mouseEvent.getY() > getHeight() - 200 && remainingDecks > 0) {
+
+            if (x > getWidth() - 200
+                    && y > getHeight() - 200
+                    && remainingDecks > 0) {
                 dealCards();
                 return;
             }
-            Deck deck = popDeckOnLocation(mouseEvent.getX(), mouseEvent.getY());
+
+            Deck deck = popDeckOnLocation(x, y);
             if (deck != null) {
-                offsetX = mouseEvent.getX() - deck.getPositionX();
-                offsetY = mouseEvent.getY() - deck.getPositionY();
+                offsetX = x - deck.getPositionX();
+                offsetY = y - deck.getPositionY();
                 draggingDeck = deck;
                 visible = topDecks[deck.getIndex()].getTopCard() != null && topDecks[deck.getIndex()].getTopCard().isVisible();
             }
@@ -583,8 +580,6 @@ public class GamePanel extends JPanel {
                     && (keyEvent.getModifiers() & Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()) != 0
                     && keyEvent.getKeyCode() == KeyEvent.VK_H)
                 getHint();
-            if (keyEvent.getKeyCode() == KeyEvent.VK_P)
-                printRecipt();
         }
 
         @Override
