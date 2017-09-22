@@ -8,33 +8,30 @@ package it.alerighi.spider;
 public class Move {
 
     /**
-     * ultimo id assegnato
-     */
-    private static int lastId;
-    /**
      * indica il tipo di mossa effettuata
      */
     private final MoveType moveType;
-    /**
-     * identification number of the move
-     */
-    private final int id = ++lastId;
+
     /**
      * indice dal quale il mazzo viene spostato
      */
     private int from;
+
     /**
      * indice al quale il mazzo viene spostato
      */
     private int to;
+
     /**
      * numero di carte spostate
      */
     private int cards;
+
     /**
      * indica l'indice de mazzetto rimosso nel caso di mossa rimozione mazzetti
      */
     private int removedDeck;
+
     /**
      * indica se la carta superiore all'eventuale mazzetto rimosso era visibile, o meno
      */
@@ -140,24 +137,15 @@ public class Move {
         return moveType;
     }
 
-    /**
-     * Ottiene l'id della mossa
-     *
-     * @return id della mossa
-     */
-    public int getId() {
-        return id;
-    }
-
     @Override
     public String toString() {
         switch (moveType) {
             case MOVE_DECK:
-                return "Move #" + id + " : move " + cards + " card" + (cards == 1 ? "" : "s") + " from " + from + " to " + to;
+                return "Move " + cards + " card" + (cards == 1 ? "" : "s") + " from " + from + " to " + to;
             case DEAL_CARDS:
-                return "Move #" + id + " : Dealed cards";
+                return "Dealed cards";
             case DECK_REMOVED:
-                return "Move #" + id + " : Removed deck from " + removedDeck + " with first card visible = " + visible;
+                return "Removed deck from " + removedDeck + " with first card visible = " + visible;
         }
         return null;
     }

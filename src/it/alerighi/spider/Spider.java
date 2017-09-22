@@ -17,7 +17,7 @@ public class Spider extends JFrame {
     /**
      * versione dell'applicazione
      */
-    public static final String VERSION = "v1.0.0";
+    public static final String VERSION = "1.0.0";
 
     /**
      * nome dell'applicazione
@@ -27,11 +27,20 @@ public class Spider extends JFrame {
      * icona del gioco
      */
     public static final Image ICON_IMAGE;
-    /** titolo della finestra */
-    private static final String TITLE = NAME + " " + VERSION;
-    /** larghezza della finestra */
+
+    /**
+     * titolo della finestra
+     */
+    private static final String TITLE = NAME + " v" + VERSION;
+
+    /**
+     * larghezza della finestra
+     */
     private static final int WIN_WIDTH = 1500;
-    /** altezza della finestra */
+
+    /**
+     * altezza della finestra
+     */
     private static final int WIN_HEIGHT = 800;
 
     static {

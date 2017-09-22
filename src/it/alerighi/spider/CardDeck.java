@@ -21,10 +21,14 @@ public class CardDeck {
      */
     private final int numberOfDecks;
 
-    /** numero di carte totale */
+    /**
+     * numero di carte totale
+     */
     private final int numberOfCards;
 
-    /** array delle carte del mazzo */
+    /**
+     * array delle carte del mazzo
+     */
     private ArrayList<Card> deck;
 
     /**

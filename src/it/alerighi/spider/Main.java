@@ -1,10 +1,11 @@
 package it.alerighi.spider;
 
-
 import javax.swing.*;
+import java.awt.*;
+import java.lang.reflect.Method;
 
 import static it.alerighi.spider.Util.info;
-
+import static it.alerighi.spider.Util.warn;
 
 /**
  * Classe Main dell'applicazione
@@ -13,6 +14,9 @@ import static it.alerighi.spider.Util.info;
  */
 public class Main {
 
+    /**
+     * Classe non instanziabile
+     */
     private Main() {}
 
     /**
@@ -32,8 +36,17 @@ public class Main {
             /* proprietà necessarie per la barra dei menù in macOS */
             System.setProperty("apple.awt.application.name", Spider.NAME);
             System.setProperty("apple.laf.useScreenMenuBar", "true");
-            com.apple.eawt.Application app = com.apple.eawt.Application.getApplication();
-            app.setDockIconImage(Spider.ICON_IMAGE);
+
+            /* setto l'icona del dock usando la reflection (per compatibilità con OS non MAC) */
+            try {
+                Class<?> applicationClass = Class.forName("com.apple.eawt.Application");
+                Method getApplication = applicationClass.getMethod("getApplication");
+                Method setDockIconImage = applicationClass.getMethod("setDockIconImage", Image.class);
+                Object applicationObject = getApplication.invoke(null);
+                setDockIconImage.invoke(applicationObject, Spider.ICON_IMAGE);
+            } catch (Exception e) {
+                warn("Cannot set dock icon");
+            }
         }
 
         /* set della grafica nativa del sistema */

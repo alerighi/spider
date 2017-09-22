@@ -21,45 +21,75 @@ public class GamePanel extends JPanel {
      * colore dello sfondo del gioco (verdino)
      */
     public static final Color BACKGROUND_COLOR = new Color(35, 104, 32);
+
     /**
      * colore dello sfondo del riquadro punteggi (verdino più scuro)
      */
     public static final Color SCORE_BOX_COLOR = new Color(33, 79, 33);
+
     /**
      * colore con cui sono evidenziate le carte dei suggerimenti
      */
     public static final Color HINT_COLOR = new Color(80, 12, 15);
+
     /**
      * array dei 10 mazzi superiori del gioco
      */
     private Deck[] topDecks = new Deck[10];
+
     /**
      * array dei 5 mazzi di carte extra da distribuire durente il gioco
      */
     private Card[][] decks = new Card[5][10];
-    /** numero di deck di carte da distribuire rimanenti */
+
+    /**
+     * numero di deck di carte da distribuire rimanenti
+     */
     private int remainingDecks = 0;
-    /** deck di carte che il giocatore sta spostando */
+
+    /**
+     * deck di carte che il giocatore sta spostando
+     */
     private Deck draggingDeck = null;
-    /** deck completati e rimossi dal gioco */
+
+    /**
+     * deck completati e rimossi dal gioco
+     */
     private Stack<Deck> removedDecks = new Stack<>();
-    /** lista delle mosse effettuate dal giocatore */
+
+    /**
+     * lista delle mosse effettuate dal giocatore
+     */
     private Stack<Move> moves = new Stack<>();
-    /** punteggio di gioco */
+
+    /**
+     * punteggio di gioco
+     */
     private int score;
-    /** lista delle mosse possibili da effettuare */
+
+    /**
+     * lista delle mosse possibili da effettuare
+     */
     private List<Move> possibleMoves;
-    /** numero di semi del gioco */
+
+    /**
+     * numero di semi del gioco
+     */
     private int numberOfSuits;
+
     /**
      * indica l'offset X del mazzetto che si trascina
      */
     private int offsetX;
+
     /**
      * indica l'offset Y del mazzetto che si trascina
      */
     private int offsetY;
-    /** indica se la carta sopra il mazzetto prima del trascinamento era visibile */
+
+    /**
+     * indica se la carta sopra il mazzetto prima del trascinamento era visibile
+     */
     private boolean visible;
 
     /**

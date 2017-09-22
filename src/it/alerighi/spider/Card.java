@@ -24,22 +24,30 @@ public class Card {
      */
     public static final int WIDTH = 100;
 
-    /** array dei nomi dei semi */
+    /**
+     * array dei nomi dei semi
+     */
     private static final String[] SUITS = {"spades", "hearts", "clubs", "diamonds"};
 
-    /** array dei valori delle carte */
+    /**
+     * array dei valori delle carte
+     */
     private static final String[] VALUES = {"ace", "2", "3", "4", "5", "6", "7", "8", "9", "10", "jack", "queen", "king"};
 
-    /** immagini delle carte */
+    /**
+     * immagini delle carte
+     */
     private static Image[] cardsImages = new Image[52];
 
-    /** immagine del retro di una carta */
+    /**
+     * immagine del retro di una carta
+     */
     private static Image back;
 
     static {
         info("Loading images from resource files...");
         try {
-            // carico le immagini delle carte normali nell'array cardsImages, una ad una
+            /* carico le immagini delle carte normali nell'array cardsImages */
             int i = 0;
             for (String suit : SUITS) {
                 for (String value : VALUES) {
