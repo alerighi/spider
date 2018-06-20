@@ -1,7 +1,8 @@
 # Spider
-Implementation in Java of the famous Spider game, included in Microsoft Windows.
+I always liked the classic Spider Game, that Microsoft shipped with Windows ultil Windows 7. Then with Windows 10 they decided to rewrite it inserting a lot of crap and unskippable ads. So I decided to create my own open source version of the game. 
+
 
 ### Usage
 In the `jar` directory you can find the jar file of the game, simply download it and double click on it to run the game. Java 8 is required.
 
-If you want to manually compile or modify the project, import it in IntelliJ Idea.
+To build the project from source, use IntelliJ Idea. 
