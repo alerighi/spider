@@ -14,7 +14,7 @@ import java.util.logging.Logger;
  *
  * @author Alessandro Righi
  */
-public class GamePanel extends JPanel {
+public final class GamePanel extends JPanel {
     private static final Logger logger = Logger.getGlobal();
 
     public static final Color BACKGROUND_COLOR = new Color(35, 104, 32);
