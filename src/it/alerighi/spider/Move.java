@@ -1,7 +1,7 @@
 package it.alerighi.spider;
 
 /**
- * Data class that represent a move of the game
+ * Abstract class that represent a move of the game
  *
  * @author Alessandro Righi
  */

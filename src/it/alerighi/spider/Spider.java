@@ -13,6 +13,7 @@ import java.util.logging.Logger;
  */
 public final class Spider extends JFrame {
     private static final Logger logger = Logger.getGlobal();
+    private static final boolean IS_MAC = System.getProperty("os.name").startsWith("Mac");
 
     public static final String APPLICATION_VERSION = "1.0.0";
     public static final String APPLICATION_NAME = "Spider";
@@ -76,7 +77,7 @@ public final class Spider extends JFrame {
     private JMenuBar buildMenuBar() {
         JMenuBar menuBar = new JMenuBar();
 
-        if (!System.getProperty("os.name").startsWith("Mac")) {
+        if (!IS_MAC) {
             JMenu fileMenu = new JMenu("File");
 
             fileMenu.addSeparator();
@@ -122,5 +123,23 @@ public final class Spider extends JFrame {
 
         menuBar.add(gameMenu);
         return menuBar;
+    }
+
+    public static void main(String args[]) {
+        logger.info(APPLICATION_NAME + " version " + APPLICATION_VERSION + " (c) 2016-2018 Alessandro Righi");
+
+        /* set propriety to use system menu bar on MacOS */
+        if (System.getProperty("os.name").startsWith("Mac")) {
+            System.setProperty("apple.awt.application.name", Spider.APPLICATION_NAME);
+            System.setProperty("apple.laf.useScreenMenuBar", "true");
+        }
+
+        try {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch (Exception e) {
+            logger.warning("Cannot set UI system look and feel");
+        }
+
+        new Spider();
     }
 }

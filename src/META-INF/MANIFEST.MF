@@ -1,2 +1,2 @@
 Manifest-Version: 1.0
-Main-Class: it.alerighi.spider.Main
+Main-Class: it.alerighi.spider.Spider
