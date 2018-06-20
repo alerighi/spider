@@ -3,8 +3,7 @@ package it.alerighi.spider;
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.io.IOException;
-
-import static it.alerighi.spider.Util.*;
+import java.util.logging.Logger;
 
 /**
  * Class that represent a card
@@ -19,6 +18,8 @@ public final class Card {
     private static final String[] SUITS = {"spades", "hearts", "clubs", "diamonds"};
     private static final String[] VALUES = {"ace", "2", "3", "4", "5", "6", "7", "8", "9", "10", "jack", "queen", "king"};
 
+    private static final Logger logger = Logger.getGlobal();
+
     private static Image[] cardsImages = new Image[52];
     private static Image back;
 
@@ -30,7 +31,7 @@ public final class Card {
     private boolean isVisible;
 
     static {
-        debug("Card", "loading images from resource files...");
+        logger.info("loading images from resource files...");
         try {
             /* carico le immagini delle carte normali nell'array cardsImages */
             int i = 0;
@@ -41,7 +42,7 @@ public final class Card {
             // carico l'immagine del dorsetto della carta
             back = ImageIO.read(Card.class.getResourceAsStream("back.png"));
         } catch (IOException e) {
-            die("Error loading card images!");
+            logger.severe("Error loading card images!");
         }
     }
 

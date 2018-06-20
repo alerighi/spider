@@ -5,8 +5,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
 import java.util.List;
-
-import static it.alerighi.spider.Util.*;
+import java.util.logging.Logger;
 
 /**
  * Classe that handles the game logic
@@ -16,6 +15,7 @@ import static it.alerighi.spider.Util.*;
  * @author Alessandro Righi
  */
 public class GamePanel extends JPanel {
+    private static final Logger logger = Logger.getGlobal();
 
     public static final Color BACKGROUND_COLOR = new Color(35, 104, 32);
     public static final Color SCORE_BOX_COLOR = new Color(33, 79, 33);
@@ -82,7 +82,7 @@ public class GamePanel extends JPanel {
      * @param numberOfSuits number of suits of the game
      */
     public void startNewGame(int numberOfSuits) {
-        debug("GamePanel","Starting new game with " + numberOfSuits);
+        logger.info("Starting new game with " + numberOfSuits);
         this.numberOfSuits = numberOfSuits;
         buildDecks();
         removedDecks.clear();
@@ -130,7 +130,7 @@ public class GamePanel extends JPanel {
      *
      * @param graphics graphics area
      */
-    private void drawScoreArea(Graphics2D graphics) {
+    private void drawScoreArea(Graphics graphics) {
         int x = getWidth() / 2 - 125;
         int y = getHeight() - 145;
         graphics.setColor(SCORE_BOX_COLOR);
@@ -143,7 +143,6 @@ public class GamePanel extends JPanel {
         } else if (isEnded()) {
             graphics.drawString("Congratulations, you won!", x + 10, y + 45);
             graphics.drawString("Final score: " + score, x + 20, y + 75);
-
         } else {
             graphics.drawString("Score: " + score, x + 60, y + 45);
             graphics.drawString("Moves: " + moves.size(), x + 60, y + 75);
@@ -163,7 +162,7 @@ public class GamePanel extends JPanel {
      *
      * @param graphics graphics area
      */
-    void drawExtraDecks(Graphics2D graphics) {
+    void drawExtraDecks(Graphics graphics) {
         if (remainingDecks == 0) {
             graphics.setColor(SCORE_BOX_COLOR);
             graphics.fillRect(getWidth() - 20 - Card.WIDTH, getHeight() - 20 - Card.HEIGHT, Card.WIDTH, Card.HEIGHT);
@@ -181,7 +180,7 @@ public class GamePanel extends JPanel {
      *
      * @param graphics graphics area
      */
-    void drawCardDecks(Graphics2D graphics) {
+    void drawCardDecks(Graphics graphics) {
         int spaceBetweenCards = (getWidth() - 10 * Card.WIDTH) / 11;
         for (int i = 0; i < 10; i++) {
             topDecks[i].paint(graphics, new Point(spaceBetweenCards * (i + 1) + Card.WIDTH * i, 20));
@@ -201,12 +200,11 @@ public class GamePanel extends JPanel {
     /**
      * Draws the game area
      *
-     * @param g graphics area
+     * @param graphics graphics area
      */
     @Override
-    protected void paintComponent(Graphics g) {
-        super.paintComponent(g);
-        Graphics2D graphics = (Graphics2D) g;
+    protected void paintComponent(Graphics graphics) {
+        super.paintComponent(graphics);
 
         graphics.setColor(BACKGROUND_COLOR);
         graphics.fillRect(0, 0, getWidth(), getHeight());
@@ -224,32 +222,17 @@ public class GamePanel extends JPanel {
     }
 
     /**
-     * Gets a subdeck from the current mouse position if present,
-     * and removes it from the game area.
-     *
-     * @param position position
-     * @return subdeck if present, else null
-     */
-    private Deck popDeckOnLocation(Point position) {
-        Deck deck = null;
-
-        for (int i = 0; i < 10 && deck == null; i++)
-            deck = topDecks[i].selectSubDeck(position, true);
-
-        return deck;
-    }
-
-    /**
      * Select a subdeck from the current mouse position if present.
      *
      * @param position position
+     * @param pop if true remove also the subdeck from the deck
      * @return subdeck if present, else null
      */
-    private Deck selectDeckOnLocation(Point position) {
+    private Deck selectDeckOnLocation(Point position, boolean pop) {
         Deck deck = null;
 
         for (int i = 0; i < 10 && deck == null; i++)
-            deck = topDecks[i].selectSubDeck(position, false);
+            deck = topDecks[i].selectSubDeck(position, pop);
 
         return deck;
     }
@@ -275,13 +258,13 @@ public class GamePanel extends JPanel {
             return; /* non ci sono più massi da distribuire */
         for (Deck d : topDecks) {
             if (d.isEmpty()) {
-                debug("Non posso dispensare le carte. È presente un buco!");
+                logger.info("Non posso dispensare le carte. È presente un buco!");
                 return;
             }
         }
         remainingDecks -= 1;
         score -= 1;
-        debug("Dispenso carte: mazzi rimanenti " + remainingDecks);
+        logger.info("Dispenso carte: mazzi rimanenti " + remainingDecks);
         for (int i = 0; i < 10; i++) {
             decks[remainingDecks][i].setVisible(true);
             topDecks[i].addCard(decks[remainingDecks][i]);
@@ -371,7 +354,7 @@ public class GamePanel extends JPanel {
             g.setStroke(oldStroke);
             paint(g);
         } catch (InterruptedException e) {
-            die("This shouldn't have ever happened!");
+            logger.severe("This shouldn't have ever happened!");
         }
     }
 
@@ -386,7 +369,7 @@ public class GamePanel extends JPanel {
         repaint();
     }
 
-    private void undoDealCards(Move toUndo) {
+    private void undoDealCards() {
         score -= 1;
         for (int i = 0; i < 10; i++) {
             topDecks[i].getSubDeck(topDecks[i].numberOfCards() - 1, true);
@@ -421,7 +404,7 @@ public class GamePanel extends JPanel {
                 undoLastMove(); /* need to undo another move! */
                 break;
             case Move.DEAL_CARDS:
-                undoDealCards(toUndo);
+                undoDealCards();
                 break;
             case Move.MOVE_DECK:
                 undoMoveDeck(toUndo);
@@ -447,7 +430,7 @@ public class GamePanel extends JPanel {
                     if (c2 != null)
                         c2.setVisible(true); /* rende visibile la carta superiore sotto il mazzetto rimosso */
                     score += 100;
-                    debug("Congratulazioni. Rimosso un mazzetto.");
+                    logger.info("Congratulazioni. Rimosso un mazzetto.");
                 }
             }
         }
@@ -504,7 +487,7 @@ public class GamePanel extends JPanel {
             if (mouseIsInDealCardsPosition(mousePosition))
                 dealCards();
 
-            Deck deck = popDeckOnLocation(mousePosition);
+            Deck deck = selectDeckOnLocation(mousePosition, true);
             if (deck != null) {
                 offset = deck.getPosition();
                 offset.translate(-mousePosition.x, -mousePosition.y);
@@ -519,7 +502,7 @@ public class GamePanel extends JPanel {
             if (draggingDeck == null)
                 return; /* non sto trascinando nulla */
 
-            Deck deck = selectDeckOnLocation(mouseEvent.getPoint());
+            Deck deck = selectDeckOnLocation(mouseEvent.getPoint(), false);
             if (deck != null) {
                 deck = topDecks[deck.getIndex()];
                 if (validMove(deck.getTopCard(), draggingDeck.getFirstCard())) {

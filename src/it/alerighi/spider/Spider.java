@@ -4,8 +4,7 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
-
-import static it.alerighi.spider.Util.*;
+import java.util.logging.Logger;
 
 /**
  * Main game window
@@ -13,6 +12,7 @@ import static it.alerighi.spider.Util.*;
  * @author Alessandro Righi
  */
 public final class Spider extends JFrame {
+    private static final Logger logger = Logger.getGlobal();
 
     public static final String APPLICATION_VERSION = "1.0.0";
     public static final String APPLICATION_NAME = "Spider";
@@ -31,7 +31,7 @@ public final class Spider extends JFrame {
         try {
             img = ImageIO.read(Spider.class.getResourceAsStream("spider.png"));
         } catch (IOException e) {
-            die("Cannot load game icon");
+            logger.severe("Cannot load game icon");
         }
         WIN_ICON_IMAGE = img;
     }
@@ -52,7 +52,7 @@ public final class Spider extends JFrame {
      * Show new game dialog
      */
     private void showNewGameDialog() {
-        debug("Spider", "prompting game mode selection");
+        logger.info("prompting game mode selection");
         final String[] GAME_MODES = {
                 "1 suit  (easy)",
                 "2 suits (medium)",
@@ -64,7 +64,7 @@ public final class Spider extends JFrame {
         if (selection == null)
             System.exit(0);
         int suits = Character.getNumericValue(selection.charAt(0));
-        debug("Spider", "starting new game with " + suits + " suits");
+        logger.info( "starting new game with " + suits + " suits");
         gamePanel.startNewGame(suits);
     }
 
@@ -76,7 +76,7 @@ public final class Spider extends JFrame {
     private JMenuBar buildMenuBar() {
         JMenuBar menuBar = new JMenuBar();
 
-        if (!Util.IS_MAC) {
+        if (!System.getProperty("os.name").startsWith("Mac")) {
             JMenu fileMenu = new JMenu("File");
 
             fileMenu.addSeparator();
