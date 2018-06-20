@@ -3,11 +3,15 @@ package it.alerighi.spider;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.util.logging.Logger;
 
 /**
  * Main game window
+ * <p>
+ * TODO: implement high score saving
  *
  * @author Alessandro Righi
  */
@@ -15,7 +19,7 @@ public final class Spider extends JFrame {
     private static final Logger logger = Logger.getGlobal();
     private static final boolean IS_MAC = System.getProperty("os.name").startsWith("Mac");
 
-    public static final String APPLICATION_VERSION = "1.0.0";
+    public static final String APPLICATION_VERSION = "1.1.0";
     public static final String APPLICATION_NAME = "Spider";
 
     private static final String WIN_TITLE = APPLICATION_NAME + " v" + APPLICATION_VERSION;
@@ -24,7 +28,6 @@ public final class Spider extends JFrame {
     private static final Image WIN_ICON_IMAGE;
 
     private final GamePanel gamePanel = new GamePanel();
-
 
     static {
         /* load game icon image */
@@ -61,11 +64,11 @@ public final class Spider extends JFrame {
         };
 
         String selection = (String) JOptionPane.showInputDialog(null, "Choose game difficulty",
-                "New Game", JOptionPane.PLAIN_MESSAGE, null, GAME_MODES, GAME_MODES[1]);
+                "New Game", JOptionPane.PLAIN_MESSAGE, null, GAME_MODES, GAME_MODES[2]);
         if (selection == null)
             System.exit(0);
         int suits = Character.getNumericValue(selection.charAt(0));
-        logger.info( "starting new game with " + suits + " suits");
+        logger.info("starting new game with " + suits + " suits");
         gamePanel.startNewGame(suits);
     }
 
@@ -81,10 +84,6 @@ public final class Spider extends JFrame {
             JMenu fileMenu = new JMenu("File");
 
             fileMenu.addSeparator();
-
-            JMenuItem itemAbout = new JMenuItem("About");
-            //itemAbout.addActionListener(a -> new AboutWindow());
-            fileMenu.add(itemAbout);
 
             JMenuItem itemExit = new JMenuItem("Quit");
             itemExit.addActionListener(a -> System.exit(0));
@@ -129,7 +128,7 @@ public final class Spider extends JFrame {
         logger.info(APPLICATION_NAME + " version " + APPLICATION_VERSION + " (c) 2016-2018 Alessandro Righi");
 
         /* set propriety to use system menu bar on MacOS */
-        if (System.getProperty("os.name").startsWith("Mac")) {
+        if (IS_MAC) {
             System.setProperty("apple.awt.application.name", Spider.APPLICATION_NAME);
             System.setProperty("apple.laf.useScreenMenuBar", "true");
         }

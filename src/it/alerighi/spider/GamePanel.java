@@ -10,8 +10,6 @@ import java.util.logging.Logger;
 /**
  * Classe that handles the game logic
  *
- * TODO: separate class into smaller classes
- *
  * @author Alessandro Righi
  */
 public final class GamePanel extends JPanel {
@@ -82,7 +80,7 @@ public final class GamePanel extends JPanel {
      * @param numberOfSuits number of suits of the game
      */
     public void startNewGame(int numberOfSuits) {
-        logger.info("Starting new game with " + numberOfSuits);
+        logger.info("Starting new game with " + numberOfSuits + " suits");
         this.numberOfSuits = numberOfSuits;
         buildDecks();
         removedDecks.clear();
@@ -138,6 +136,7 @@ public final class GamePanel extends JPanel {
         graphics.setColor(Color.black);
         graphics.drawRect(x, y, 250, 125);
         graphics.setFont(graphics.getFont().deriveFont(graphics.getFont().getSize() * 1.4F));
+
         if (numberOfSuits == 0) {
             graphics.drawString("Select Game Mode!", x + 23, y + 45);
         } else if (isEnded()) {
@@ -186,7 +185,7 @@ public final class GamePanel extends JPanel {
             topDecks[i].paint(graphics, new Point(spaceBetweenCards * (i + 1) + Card.WIDTH * i, 20));
         }
 
-        /* disegna i mazzi rimossi */
+        /* draw removed decks */
         int x = 20;
         int y = getHeight() - Card.HEIGHT - 20;
         for (Deck d : removedDecks) {
@@ -212,11 +211,11 @@ public final class GamePanel extends JPanel {
         drawScoreArea(graphics);
         drawExtraDecks(graphics);
 
-        /* se il gioco è inizializzato */
+        /* if game is started */
         if (numberOfSuits != 0)
             drawCardDecks(graphics);
 
-        /* disegna eventualmente il mazzo che si sta trascinando */
+        /* draw dragging deck if any */
         if (draggingDeck != null)
             draggingDeck.paint(graphics);
     }
@@ -225,14 +224,15 @@ public final class GamePanel extends JPanel {
      * Select a subdeck from the current mouse position if present.
      *
      * @param position position
-     * @param pop if true remove also the subdeck from the deck
+     * @param pop      if true remove also the subdeck from the deck
      * @return subdeck if present, else null
      */
     private Deck selectDeckOnLocation(Point position, boolean pop) {
         Deck deck = null;
 
-        for (int i = 0; i < 10 && deck == null; i++)
+        for (int i = 0; i < 10 && deck == null; i++) {
             deck = topDecks[i].selectSubDeck(position, pop);
+        }
 
         return deck;
     }
@@ -288,21 +288,21 @@ public final class GamePanel extends JPanel {
      * Get a list of possible moves
      *
      * @return list of possible moves
-     *
+     * <p>
      * TODO: this method is shit
      */
     private List<Move.MoveDeckMove> getPossibleMoves() {
         LinkedList<Move.MoveDeckMove> moves = new LinkedList<>();
         for (int i = 0; i < 10; i++) {
-            for (int j = 0; j < topDecks[i].numberOfCards(); j++) {
-                if (topDecks[i].isOrderdered(j) && topDecks[i].getCardByIndex(j).isVisible()) {
+            Deck deck = topDecks[i];
+            for (int j = 0; j < deck.numberOfCards(); j++) {
+                Card bottomCard = deck.getCardByIndex(j);
+                if (deck.isOrderdered(j) && bottomCard.isVisible()) {
                     for (int a = 0; a < 10; a++) {
-                        if (i != a && validMove(topDecks[a].getTopCard(), topDecks[i].getCardByIndex(j))) {
-                            Move.MoveDeckMove move = new Move.MoveDeckMove(i, a, topDecks[i].numberOfCards() - j, false);
-                            Card topCard = topDecks[a].getTopCard();
-                            if (topCard == null
-                                    || topDecks[i].getCardByIndex(j) != null
-                                    || topCard.suit == topDecks[i].getCardByIndex(j).suit)
+                        Card topCard = topDecks[a].getTopCard();
+                        if (i != a && validMove(topCard, bottomCard)) {
+                            Move.MoveDeckMove move = new Move.MoveDeckMove(i, a, deck.numberOfCards() - j, false);
+                            if (topCard == null || topCard.suit == bottomCard.suit)
                                 moves.addFirst(move);
                             else
                                 moves.addLast(move);
@@ -332,9 +332,9 @@ public final class GamePanel extends JPanel {
             Stroke highWidthStroke = new BasicStroke(5);
             g.setStroke(highWidthStroke);
 
-            Deck d = topDecks[move.from];
-            Card c = d.getCardByIndex(d.numberOfCards() - move.cards);
-            g.drawRect(c.getPosition().x, c.getPosition().y, Card.WIDTH, Card.HEIGHT + move.cards * Deck.SPACE_BETWEEN_CARDS - Deck.SPACE_BETWEEN_CARDS);
+            Deck deck = topDecks[move.from];
+            Card card = deck.getCardByIndex(deck.numberOfCards() - move.cards);
+            g.drawRect(card.getPosition().x, card.getPosition().y, Card.WIDTH, Card.HEIGHT + move.cards * Deck.SPACE_BETWEEN_CARDS - Deck.SPACE_BETWEEN_CARDS);
 
             Thread.sleep(400);
             g.setStroke(oldStroke);
@@ -342,13 +342,13 @@ public final class GamePanel extends JPanel {
             g.setStroke(highWidthStroke);
             g.setColor(HINT_COLOR);
 
-            d = topDecks[move.to];
-            c = d.getTopCard();
+            deck = topDecks[move.to];
+            card = deck.getTopCard();
 
-            if (c != null)
-                g.drawRect(c.getPosition().x, c.getPosition().y, Card.WIDTH, Card.HEIGHT);
+            if (card != null)
+                g.drawRect(card.getPosition().x, card.getPosition().y, Card.WIDTH, Card.HEIGHT);
             else
-                g.drawRect(d.getPosition().x, d.getPosition().y, Card.WIDTH, Card.HEIGHT);
+                g.drawRect(deck.getPosition().x, deck.getPosition().y, Card.WIDTH, Card.HEIGHT);
 
             Thread.sleep(400);
             g.setStroke(oldStroke);
@@ -424,7 +424,7 @@ public final class GamePanel extends JPanel {
                     if (c2 != null)
                         c2.setVisible(true); /* rende visibile la carta superiore sotto il mazzetto rimosso */
                     score += 100;
-                    logger.info("Congratulazioni. Rimosso un mazzetto.");
+                    logger.info("One deck removed");
                 }
             }
         }
@@ -432,8 +432,6 @@ public final class GamePanel extends JPanel {
 
     /**
      * Class to handle mouse events
-     *
-     * TODO: move it in another file ?
      */
     private class GameEventListener implements MouseListener, MouseMotionListener, KeyListener {
 
@@ -481,47 +479,61 @@ public final class GamePanel extends JPanel {
             if (mouseIsInDealCardsPosition(mousePosition))
                 dealCards();
 
+            for (int i = 0; i < 10; ++i) {
+                topDecks[i].flagLocation(mousePosition);
+            }
+
             Deck deck = selectDeckOnLocation(mousePosition, true);
             if (deck != null) {
                 offset = deck.getPosition();
                 offset.translate(-mousePosition.x, -mousePosition.y);
                 draggingDeck = deck;
+                deck.unFlagLocation();
                 Card topCard = topDecks[deck.getIndex()].getTopCard();
                 visible = topCard != null && topCard.isVisible();
             }
+            repaint();
+
         }
 
         @Override
         public void mouseReleased(MouseEvent mouseEvent) {
-            if (draggingDeck == null)
-                return; /* non sto trascinando nulla */
-
-            Deck deck = selectDeckOnLocation(mouseEvent.getPoint(), false);
-            if (deck != null) {
-                deck = topDecks[deck.getIndex()];
-                if (validMove(deck.getTopCard(), draggingDeck.getFirstCard())) {
-                    Card c = topDecks[draggingDeck.getIndex()].getTopCard();
-                    if (c != null)
-                        c.setVisible(true); /* scopre la carta sopra il mazzo vecchio da cui si trascina */
-                    deck.appendDeck(draggingDeck);
-                    Move m = new Move.MoveDeckMove(draggingDeck.getIndex(), deck.getIndex(), draggingDeck.numberOfCards(), visible);
-                    moves.push(m);
-                    repaint();
-                    checkAndRemoveDecks();
-                    possibleMoves = getPossibleMoves();
-                    score -= 1;
-                    draggingDeck = null;
-                    return;
-                }
+            for (int i = 0; i < 10; ++i) {
+                topDecks[i].unFlagLocation();
             }
-            topDecks[draggingDeck.getIndex()].appendDeck(draggingDeck);
-            draggingDeck = null;
+
+            if (draggingDeck != null) {
+                Deck deck = selectDeckOnLocation(mouseEvent.getPoint(), false);
+                if (deck != null) {
+                    deck = topDecks[deck.getIndex()];
+                    if (validMove(deck.getTopCard(), draggingDeck.getFirstCard())) {
+                        Card c = topDecks[draggingDeck.getIndex()].getTopCard();
+                        if (c != null)
+                            c.setVisible(true); /* scopre la carta sopra il mazzo vecchio da cui si trascina */
+                        deck.appendDeck(draggingDeck);
+                        Move m = new Move.MoveDeckMove(draggingDeck.getIndex(), deck.getIndex(), draggingDeck.numberOfCards(), visible);
+                        moves.push(m);
+                        repaint();
+                        checkAndRemoveDecks();
+                        possibleMoves = getPossibleMoves();
+                        score -= 1;
+                        draggingDeck = null;
+                        return;
+                    }
+                }
+                topDecks[draggingDeck.getIndex()].appendDeck(draggingDeck);
+                draggingDeck = null;
+            }
             repaint();
         }
 
         @Override
         public void mouseDragged(MouseEvent e) {
             Point position = getMousePosition();
+
+            for (int i = 0; i < 10; ++i) {
+                topDecks[i].unFlagLocation();
+            }
 
             if (draggingDeck == null || position == null)
                 return;

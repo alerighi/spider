@@ -3,6 +3,7 @@ package it.alerighi.spider;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 /**
  * Class that reppresent a game deck
@@ -10,12 +11,14 @@ import java.util.List;
  * @author Alessandro Righi
  */
 public final class Deck {
+    private static final Logger logger = Logger.getGlobal();
 
     public static final int SPACE_BETWEEN_CARDS = 25;
     public static final int SPACE_BETWEEN_CARDS_COVERED = 10;
 
     private Point position;
     private int index;
+    private int flaggedCardIndex;
 
     private final List<Card> cards;
 
@@ -79,9 +82,11 @@ public final class Deck {
             graphics.setColor(Color.BLACK);
             graphics.drawRect(position.x, position.y, Card.WIDTH, Card.HEIGHT);
         } else {
-            for (Card card : cards) {
+            for (int i = 0; i < cards.size(); i++) {
+                Card card = cards.get(i);
                 card.paint(graphics, position);
-                position.translate(0, card.isVisible() ? SPACE_BETWEEN_CARDS : SPACE_BETWEEN_CARDS_COVERED);
+                int space = i == flaggedCardIndex ? 20 : 0;
+                position.translate(0, card.isVisible() ? SPACE_BETWEEN_CARDS + space : SPACE_BETWEEN_CARDS_COVERED);
             }
         }
     }
@@ -114,7 +119,7 @@ public final class Deck {
      * Get a subdeck from n to top, onby if it's ordered
      *
      * @param index starting index
-     * @param pop if true removes the subdeck from the deck
+     * @param pop   if true removes the subdeck from the deck
      * @return the subdeck, if impossible to get null
      */
     public Deck getSubDeck(int index, boolean pop) {
@@ -126,14 +131,35 @@ public final class Deck {
         return deck;
     }
 
+    private int getCardIndexFromLocation(Point location) {
+        int y = getTopCard().getPosition().y;
+        int x = position.x;
+        for (int i = cards.size() - 1; i >= 0; i--) {
+            Card card = cards.get(i);
+            if (location.x > x
+                    && location.x < x + Card.WIDTH
+                    && location.y > y
+                    && location.y < y + Card.HEIGHT && card.isVisible())
+                return i;
+            y -= card.isVisible() ? SPACE_BETWEEN_CARDS : SPACE_BETWEEN_CARDS_COVERED;
+        }
+        return -1;
+    }
+
+    public void flagLocation(Point location) {
+        flaggedCardIndex = getCardIndexFromLocation(location);
+    }
+
+    public void unFlagLocation() {
+        flaggedCardIndex = -1;
+    }
+
     /**
      * Get the subdeck from (x,y) and the end, if exists
      *
      * @param getPosition position
-     * @param pop if true also remove subdeck from deck
+     * @param pop         if true also remove subdeck from deck
      * @return the deck if exists, else null
-     *
-     * TODO: rewrite this method
      */
     public Deck selectSubDeck(Point getPosition, boolean pop) {
         if (cards.isEmpty()) {
@@ -145,25 +171,17 @@ public final class Deck {
             else
                 return null;
         }
-        int y = getTopCard().getPosition().y;
-        int x = position.x;
-        int i;
-        for (i = cards.size() - 1; i >= 0; i--) {
-            Card card = cards.get(i);
-            if (getPosition.x > x
-                    && getPosition.x < x + Card.WIDTH
-                    && getPosition.y > y
-                    && getPosition.y < y + Card.HEIGHT && card.isVisible())
-                break; /* found card */
-            y -= card.isVisible() ? SPACE_BETWEEN_CARDS : SPACE_BETWEEN_CARDS_COVERED;
-        }
+        int i = getCardIndexFromLocation(getPosition);
         if (i < 0)
             return null;
+        Card card = getCardByIndex(i);
         Deck deck = getSubDeck(i, pop);
-        if (deck == null)
-            return null;
-        deck.setPosition(new Point(x, y));
-        deck.setIndex(index);
+
+        if (deck != null) {
+            deck.setPosition(card.getPosition());
+            deck.setIndex(index);
+        }
+
         return deck;
     }
 
@@ -191,9 +209,9 @@ public final class Deck {
      * @param index index of the card
      * @return card
      */
-     public Card getCardByIndex(int index) {
-         return cards.get(index);
-     }
+    public Card getCardByIndex(int index) {
+        return cards.get(index);
+    }
 
     /**
      * Get the number of cards in the deck

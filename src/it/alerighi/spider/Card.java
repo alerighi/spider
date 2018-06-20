@@ -33,13 +33,13 @@ public final class Card {
     static {
         logger.info("loading images from resource files...");
         try {
-            /* carico le immagini delle carte normali nell'array cardsImages */
             int i = 0;
-            for (String suit : SUITS)
-                for (String value : VALUES)
+            for (String suit : SUITS) {
+                for (String value : VALUES) {
                     cardsImages[i++] = ImageIO.read(Card.class.getResourceAsStream(value + "_of_" + suit + ".png"));
+                }
+            }
 
-            // carico l'immagine del dorsetto della carta
             back = ImageIO.read(Card.class.getResourceAsStream("back.png"));
         } catch (IOException e) {
             logger.severe("Error loading card images!");
@@ -49,7 +49,7 @@ public final class Card {
     /**
      * Card constructor
      *
-     * @param suit suit value (0-3)
+     * @param suit  suit value (0-3)
      * @param value card value (1-11)
      */
     public Card(int suit, int value) {

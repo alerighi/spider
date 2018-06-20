@@ -8,7 +8,6 @@ package it.alerighi.spider;
 public abstract class Move {
 
     public static final class DealCardsMove extends Move {
-
     }
 
     public static final class RemoveDeckMove extends Move {
@@ -18,7 +17,7 @@ public abstract class Move {
         /**
          * Create a new deck remove move
          *
-         * @param index index of the upper deck where it was the removed deck
+         * @param index   index of the upper deck where it was the removed deck
          * @param visible indicate if the card under the removed deck was visible
          */
         public RemoveDeckMove(int index, boolean visible) {
@@ -36,10 +35,10 @@ public abstract class Move {
         /**
          * Create a new deck move move
          *
-         * @param from source index
-         * @param to destination index
+         * @param from          source index
+         * @param to            destination index
          * @param numberOfCards number of cards moved
-         * @param visible indicate if the card under the moved deck was visible
+         * @param visible       indicate if the card under the moved deck was visible
          */
         public MoveDeckMove(int from, int to, int numberOfCards, boolean visible) {
             this.to = to;
