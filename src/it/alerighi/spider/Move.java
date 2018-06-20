@@ -1,140 +1,60 @@
 package it.alerighi.spider;
 
 /**
- * Classe che rappresenta una mossa di gioco
+ * Data class that represent a move of the game
  *
  * @author Alessandro Righi
  */
-public class Move {
+public final class Move {
+
+    public final MoveType moveType;
+
+    public final int from;
+    public final int to;
+    public final int cards;
+    public final int removedDeck;
+    public final boolean visible;
 
     /**
-     * indica il tipo di mossa effettuata
+     * Create a deal cards move
+     *
+     * @return dealCards Move
      */
-    private final MoveType moveType;
-
-    /**
-     * indice dal quale il mazzo viene spostato
-     */
-    private int from;
-
-    /**
-     * indice al quale il mazzo viene spostato
-     */
-    private int to;
-
-    /**
-     * numero di carte spostate
-     */
-    private int cards;
-
-    /**
-     * indica l'indice de mazzetto rimosso nel caso di mossa rimozione mazzetti
-     */
-    private int removedDeck;
-
-    /**
-     * indica se la carta superiore all'eventuale mazzetto rimosso era visibile, o meno
-     */
-    private boolean visible;
-
-    /**
-     * Crea una nuova mossa di distribuzione di carte
-     */
-    public Move() {
-        moveType = MoveType.DEAL_CARDS;
+    public static Move dealCards() {
+        return new Move(MoveType.DEAL_CARDS, 0, 0, 0, 0, false);
     }
 
     /**
-     * Crea una mossa di rimozione di un mazzetto
+     * Create a new deck remove move
      *
-     * @param indice  indice del mazzetto rimosso
-     * @param visible indica se la carta superiore del mazzetto era visibile o meno
+     * @param index index of the upper deck where it was the removed deck
+     * @param visible indicate if the card under the removed deck was visible
+     * @return removedDeck Move
      */
-    public Move(int indice, boolean visible) {
-        moveType = MoveType.DECK_REMOVED;
-        removedDeck = indice;
-        this.visible = visible;
+    public static Move deckRemoved(int index, boolean visible) {
+        return new Move(MoveType.DECK_REMOVED, 0, 0, 0, index, visible);
     }
 
     /**
-     * Indica una mossa di spostamento di un mazzetto di carte
+     * Create a new deck move move
      *
-     * @param from  indice del mazzo dal quale le carte sono spsotate
-     * @param to    indice del mazzo sul quale le carte sono spostate
-     * @param cards numero di carte spostate
+     * @param from source index
+     * @param to destination index
+     * @param numberOfCards number of cards moved
+     * @param visible indicate if the card under the moved deck was visible
+     * @return moveDeck Move
      */
-    public Move(int from, int to, int cards) {
-        moveType = MoveType.MOVE_DECK;
+    public static Move moveDeck(int from, int to, int numberOfCards, boolean visible) {
+        return new Move(MoveType.MOVE_DECK, from, to, numberOfCards, 0, visible);
+    }
+
+    private Move(MoveType type, int from, int to, int cards, int removedDeck, boolean visible) {
+        this.moveType = type;
         this.from = from;
         this.to = to;
         this.cards = cards;
-    }
-
-    /**
-     * Indica una mossa di spostamento di un mazzetto di carte
-     *
-     * @param from    indice del mazzo dal quale le carte sono spsotate
-     * @param to      indice del mazzo sul quale le carte sono spostate
-     * @param cards   numero di carte spostate
-     * @param visible indica se la carta prima era visibile o meno
-     */
-    public Move(int from, int to, int cards, boolean visible) {
-        this(from, to, cards);
+        this.removedDeck = removedDeck;
         this.visible = visible;
-    }
-
-    /**
-     * Ritorna l'indice del deck di origine
-     *
-     * @return indice del deck di origine
-     */
-    public int getFrom() {
-        return from;
-    }
-
-    /**
-     * Ritorna l'indice del deck di destinazione
-     *
-     * @return indice del deck di destinazione
-     */
-    public int getTo() {
-        return to;
-    }
-
-    /**
-     * Ritorna il numero di carte spostate da from a to
-     *
-     * @return numero di carte spostate
-     */
-    public int getCards() {
-        return cards;
-    }
-
-    /**
-     * Ritorna l'indice del deck rimosso
-     *
-     * @return indice del deck rimosso
-     */
-    public int getRemovedDeck() {
-        return removedDeck;
-    }
-
-    /**
-     * Ritorna se la carta sopra mazzetto rimosso era visibile o meno
-     *
-     * @return true se era visibile, false altrimenti
-     */
-    public boolean isVisible() {
-        return visible;
-    }
-
-    /**
-     * Ritorna il tipo di mossa
-     *
-     * @return tipo di mossa
-     */
-    public MoveType getMoveType() {
-        return moveType;
     }
 
     @Override
@@ -150,9 +70,6 @@ public class Move {
         return null;
     }
 
-    /**
-     * Rappresenta il tipo di mossa eseguita
-     */
     public enum MoveType {
         DEAL_CARDS,
         DECK_REMOVED,

@@ -96,6 +96,7 @@ public class GamePanel extends JPanel {
      */
     public GamePanel() {
         debug("GamePanel", "initializing game panel");
+        debug("GamePanel", "initializing game panel");
         addMouseListener(new GameMouseListener());
         addMouseMotionListener(new GameMouseMotionListener());
         addKeyListener(new GameKeyListener());
@@ -331,7 +332,7 @@ public class GamePanel extends JPanel {
             decks[remainingDecks][i].setVisible(true);
             topDecks[i].addCard(decks[remainingDecks][i]);
         }
-        moves.add(new Move());
+        moves.add(Move.dealCards());
         checkAndRemoveDecks();
         possibleMoves = getPossibleMoves();
         repaint();
@@ -362,9 +363,9 @@ public class GamePanel extends JPanel {
                             if (topDecks[a].getTopCard() == null
                                     || topDecks[i].getCardByIndex(j) != null
                                     || topDecks[a].getTopCard().getSuit() == topDecks[i].getCardByIndex(j).getSuit())
-                                goodMoves.add(new Move(i, a, topDecks[i].numberOfCards() - j));
+                                goodMoves.add(Move.moveDeck(i, a, topDecks[i].numberOfCards() - j, false));
                             else
-                                badMoves.add(new Move(i, a, topDecks[i].numberOfCards() - j));
+                                badMoves.add(Move.moveDeck(i, a, topDecks[i].numberOfCards() - j, false));
 
         goodMoves.addAll(badMoves);
         return goodMoves;
@@ -387,9 +388,9 @@ public class GamePanel extends JPanel {
             Stroke highWidthStroke = new BasicStroke(5);
             g.setStroke(highWidthStroke);
 
-            Deck d = topDecks[move.getFrom()];
-            Card c = d.getCardByIndex(d.numberOfCards() - move.getCards());
-            g.drawRect(c.getPositionX(), c.getPositionY(), Card.WIDTH, Card.HEIGHT + move.getCards() * Deck.SPACE_BETWEEN_CARDS - Deck.SPACE_BETWEEN_CARDS);
+            Deck d = topDecks[move.from];
+            Card c = d.getCardByIndex(d.numberOfCards() - move.cards);
+            g.drawRect(c.getPositionX(), c.getPositionY(), Card.WIDTH, Card.HEIGHT + move.cards * Deck.SPACE_BETWEEN_CARDS - Deck.SPACE_BETWEEN_CARDS);
 
             Thread.sleep(400);
             g.setStroke(oldStroke);
@@ -397,7 +398,7 @@ public class GamePanel extends JPanel {
             g.setStroke(highWidthStroke);
             g.setColor(HINT_COLOR);
 
-            d = topDecks[move.getTo()];
+            d = topDecks[move.to];
             c = d.getTopCard();
 
             if (c != null)
@@ -409,7 +410,7 @@ public class GamePanel extends JPanel {
             g.setStroke(oldStroke);
             paint(g);
         } catch (InterruptedException e) {
-            err("This shouldn't have ever happened!");
+            die("This shouldn't have ever happened!");
         }
     }
 
@@ -420,11 +421,11 @@ public class GamePanel extends JPanel {
         if (moves.empty())
             return; /* nessuna mossa da annullare */
         Move toUndo = moves.pop();
-        switch (toUndo.getMoveType()) {
+        switch (toUndo.moveType) {
             case DECK_REMOVED:
-                if (!toUndo.isVisible())
-                    topDecks[toUndo.getRemovedDeck()].getTopCard().setVisible(false);
-                topDecks[toUndo.getRemovedDeck()].appendDeck(removedDecks.pop());
+                if (!toUndo.visible)
+                    topDecks[toUndo.removedDeck].getTopCard().setVisible(false);
+                topDecks[toUndo.removedDeck].appendDeck(removedDecks.pop());
                 undoLastMove(); /* annulla un altra mossa */
                 break;
             case DEAL_CARDS:
@@ -439,11 +440,11 @@ public class GamePanel extends JPanel {
                 break;
             case MOVE_DECK:
                 score -= 1;
-                Deck from = topDecks[toUndo.getTo()];
-                Deck to = topDecks[toUndo.getFrom()];
-                if (!toUndo.isVisible() && to.getTopCard() != null)
+                Deck from = topDecks[toUndo.to];
+                Deck to = topDecks[toUndo.from];
+                if (!toUndo.visible && to.getTopCard() != null)
                     to.getTopCard().setVisible(false);
-                Deck toMove = from.getSubDeck(from.numberOfCards() - toUndo.getCards(), true);
+                Deck toMove = from.getSubDeck(from.numberOfCards() - toUndo.cards, true);
                 to.appendDeck(toMove);
                 repaint();
         }
@@ -462,7 +463,7 @@ public class GamePanel extends JPanel {
                 if (c.isVisible() && c.getValue() == 13 && d.isOrderdered(i)) {
                     /* trovato mazzetto removibile */
                     removedDecks.push(d.getSubDeck(i, true));
-                    moves.push(new Move(j, d.numberOfCards() <= 0 || d.getTopCard().isVisible()));
+                    moves.push(Move.deckRemoved(j, d.numberOfCards() <= 0 || d.getTopCard().isVisible()));
                     Card c2 = d.getTopCard();
                     if (c2 != null)
                         c2.setVisible(true); /* rende visibile la carta superiore sotto il mazzetto rimosso */
@@ -532,7 +533,7 @@ public class GamePanel extends JPanel {
                     if (c != null)
                         c.setVisible(true); /* scopre la carta sopra il mazzo vecchio da cui si trascina */
                     deck.appendDeck(draggingDeck);
-                    Move m = new Move(draggingDeck.getIndex(), deck.getIndex(), draggingDeck.numberOfCards(), visible);
+                    Move m = Move.moveDeck(draggingDeck.getIndex(), deck.getIndex(), draggingDeck.numberOfCards(), visible);
                     moves.push(m);
                     repaint();
                     checkAndRemoveDecks();

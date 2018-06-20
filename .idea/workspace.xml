@@ -7,9 +7,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="8d3e9c88-7739-43bf-8381-9187b1978c43" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Spider.iml" beforeDir="false" afterPath="$PROJECT_DIR$/Spider.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/alerighi/spider/Card.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/alerighi/spider/Card.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/it/alerighi/spider/GamePanel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/alerighi/spider/GamePanel.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/alerighi/spider/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/alerighi/spider/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/alerighi/spider/Move.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/alerighi/spider/Move.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/alerighi/spider/Spider.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/alerighi/spider/Spider.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/alerighi/spider/Util.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/alerighi/spider/Util.java" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -30,7 +33,7 @@
       <file leaf-file-name="Card.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/it/alerighi/spider/Card.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1496">
+            <state relative-caret-position="1840">
               <caret line="92" column="5" selection-start-line="92" selection-start-column="5" selection-end-line="92" selection-end-column="5" />
               <folding>
                 <element signature="imports" expanded="true" />
@@ -42,8 +45,16 @@
       <file leaf-file-name="Util.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/it/alerighi/spider/Util.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1020">
-              <caret line="66" column="34" selection-start-line="66" selection-start-column="34" selection-end-line="66" selection-end-column="34" />
+            <state relative-caret-position="360">
+              <caret line="18" column="40" lean-forward="true" selection-start-line="18" selection-start-column="40" selection-end-line="18" selection-end-column="40" />
+              <folding>
+                <element signature="e#625#626#0" expanded="true" />
+                <element signature="e#680#681#0" expanded="true" />
+                <element signature="e#941#942#0" expanded="true" />
+                <element signature="e#982#983#0" expanded="true" />
+                <element signature="e#1209#1210#0" expanded="true" />
+                <element signature="e#1264#1265#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -51,7 +62,7 @@
       <file leaf-file-name="CardDeck.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/it/alerighi/spider/CardDeck.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="612">
+            <state relative-caret-position="-477">
               <caret line="38" column="7" selection-start-line="38" selection-start-column="7" selection-end-line="38" selection-end-column="7" />
             </state>
           </provider>
@@ -60,7 +71,7 @@
       <file leaf-file-name="Deck.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/it/alerighi/spider/Deck.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1802">
+            <state relative-caret-position="2160">
               <caret line="116" selection-start-line="116" selection-end-line="116" />
               <folding>
                 <element signature="imports" expanded="true" />
@@ -72,8 +83,8 @@
       <file leaf-file-name="Spider.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/it/alerighi/spider/Spider.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="170">
-              <caret line="15" selection-start-line="15" selection-end-line="15" />
+            <state relative-caret-position="-117">
+              <caret line="78" column="22" selection-start-line="78" selection-start-column="22" selection-end-line="78" selection-end-column="22" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -81,11 +92,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="GamePanel.java" pinned="false" current-in-tab="true">
+      <file leaf-file-name="GamePanel.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/it/alerighi/spider/GamePanel.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="453">
-              <caret line="596" column="40" lean-forward="true" selection-start-line="596" selection-start-column="40" selection-end-line="596" selection-end-column="40" />
+            <state relative-caret-position="-4684">
+              <caret line="334" column="34" selection-start-line="334" selection-start-column="34" selection-end-line="334" selection-end-column="34" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -93,11 +104,15 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Move.java" pinned="false" current-in-tab="false">
+      <file leaf-file-name="Move.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/it/alerighi/spider/Move.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="136">
-              <caret line="8" selection-start-line="8" selection-end-line="8" />
+            <state relative-caret-position="243">
+              <caret line="47" column="15" selection-start-line="47" selection-start-column="15" selection-end-line="47" selection-end-column="15" />
+              <folding>
+                <element signature="e#377#378#0" expanded="true" />
+                <element signature="e#410#411#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -105,8 +120,8 @@
       <file leaf-file-name="Main.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/it/alerighi/spider/Main.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="408">
-              <caret line="28" column="18" selection-start-line="28" selection-start-column="18" selection-end-line="28" selection-end-column="18" />
+            <state relative-caret-position="560">
+              <caret line="32" column="8" selection-start-line="32" selection-start-column="8" selection-end-line="32" selection-end-column="8" />
             </state>
           </provider>
         </entry>
@@ -130,6 +145,7 @@
       <find>visible</find>
       <find>getPossibleMoves</find>
       <find>getCardByIndex</find>
+      <find>undo</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -146,14 +162,14 @@
       <list>
         <option value="$PROJECT_DIR$/src/it/alerighi/spider/NewGameDialog.java" />
         <option value="$PROJECT_DIR$/src/it/alerighi/spider/AboutWindow.java" />
-        <option value="$PROJECT_DIR$/src/it/alerighi/spider/Move.java" />
-        <option value="$PROJECT_DIR$/src/it/alerighi/spider/Main.java" />
         <option value="$PROJECT_DIR$/src/it/alerighi/spider/Deck.java" />
-        <option value="$PROJECT_DIR$/src/it/alerighi/spider/Util.java" />
         <option value="$PROJECT_DIR$/src/it/alerighi/spider/Card.java" />
         <option value="$PROJECT_DIR$/src/it/alerighi/spider/CardDeck.java" />
+        <option value="$PROJECT_DIR$/src/it/alerighi/spider/Main.java" />
         <option value="$PROJECT_DIR$/src/it/alerighi/spider/Spider.java" />
+        <option value="$PROJECT_DIR$/src/it/alerighi/spider/Util.java" />
         <option value="$PROJECT_DIR$/src/it/alerighi/spider/GamePanel.java" />
+        <option value="$PROJECT_DIR$/src/it/alerighi/spider/Move.java" />
       </list>
     </option>
   </component>
@@ -191,6 +207,12 @@
               <item name="spider" type="462c0819:PsiDirectoryNode" />
               <item name="src" type="462c0819:PsiDirectoryNode" />
             </path>
+            <path>
+              <item name="spider" type="b2602c69:ProjectViewProjectNode" />
+              <item name="spider" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="spider" type="462c0819:PsiDirectoryNode" />
+            </path>
           </expand>
           <select />
         </subPane>
@@ -210,7 +232,7 @@
     <property name="project.structure.last.edited" value="Project" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.2" />
-    <property name="settings.editor.selected.configurable" value="preferences.sourceCode.Java" />
+    <property name="settings.editor.selected.configurable" value="editor.preferences.fonts.default" />
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -506,7 +528,7 @@
       <workItem from="1506252913634" duration="3240000" />
       <workItem from="1512167279827" duration="79000" />
       <workItem from="1522964092515" duration="312000" />
-      <workItem from="1529482397327" duration="131000" />
+      <workItem from="1529482397327" duration="2401000" />
     </task>
     <task id="LOCAL-00001" summary="Classe main perché il mac è idiota">
       <created>1481157567035</created>
@@ -561,7 +583,7 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="60193000" />
+    <option name="totallyTimeSpent" value="62463000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-7" y="-7" width="2575" height="1415" extended-state="6" />
@@ -569,7 +591,7 @@
     <layout>
       <window_info anchor="right" id="Palette" order="3" />
       <window_info anchor="bottom" id="TODO" order="6" />
-      <window_info active="true" anchor="bottom" id="Messages" order="10" visible="true" weight="0.3291634" />
+      <window_info anchor="bottom" id="Messages" order="10" weight="0.3291634" />
       <window_info anchor="right" id="Palette&#9;" order="9" />
       <window_info id="Image Layers" order="7" />
       <window_info anchor="right" id="Capture Analysis" order="6" />
@@ -577,11 +599,11 @@
       <window_info anchor="right" id="Maven Projects" order="4" />
       <window_info anchor="bottom" id="Database Changes" order="11" show_stripe_button="false" />
       <window_info anchor="bottom" id="Version Control" order="8" weight="0.32972974" />
-      <window_info anchor="bottom" id="Run" order="2" weight="0.39405787" />
+      <window_info anchor="bottom" id="Run" order="2" visible="true" weight="0.19390148" />
       <window_info anchor="bottom" id="Terminal" order="9" />
       <window_info id="Capture Tool" order="2" />
       <window_info id="Designer" order="3" />
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.17733598" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.17733598" />
       <window_info anchor="right" id="Database" order="5" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
@@ -1045,21 +1067,56 @@
     <entry file="file://$PROJECT_DIR$/src/it/alerighi/spider/AboutWindow.java" />
     <entry file="file://$PROJECT_DIR$/src/it/alerighi/spider/CardDeck.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="612">
+        <state relative-caret-position="-477">
           <caret line="38" column="7" selection-start-line="38" selection-start-column="7" selection-end-line="38" selection-end-column="7" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/it/alerighi/spider/Card.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1840">
+          <caret line="92" column="5" selection-start-line="92" selection-start-column="5" selection-end-line="92" selection-end-column="5" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/it/alerighi/spider/Main.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="560">
+          <caret line="32" column="8" selection-start-line="32" selection-start-column="8" selection-end-line="32" selection-end-column="8" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/it/alerighi/spider/Util.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1020">
-          <caret line="66" column="34" selection-start-line="66" selection-start-column="34" selection-end-line="66" selection-end-column="34" />
+        <state relative-caret-position="360">
+          <caret line="18" column="40" lean-forward="true" selection-start-line="18" selection-start-column="40" selection-end-line="18" selection-end-column="40" />
+          <folding>
+            <element signature="e#625#626#0" expanded="true" />
+            <element signature="e#680#681#0" expanded="true" />
+            <element signature="e#941#942#0" expanded="true" />
+            <element signature="e#982#983#0" expanded="true" />
+            <element signature="e#1209#1210#0" expanded="true" />
+            <element signature="e#1264#1265#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/it/alerighi/spider/Spider.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-117">
+          <caret line="78" column="22" selection-start-line="78" selection-start-column="22" selection-end-line="78" selection-end-column="22" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/it/alerighi/spider/Deck.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1802">
+        <state relative-caret-position="2160">
           <caret line="116" selection-start-line="116" selection-end-line="116" />
           <folding>
             <element signature="imports" expanded="true" />
@@ -1067,20 +1124,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/it/alerighi/spider/Spider.java">
+    <entry file="file://$PROJECT_DIR$/src/it/alerighi/spider/GamePanel.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="170">
-          <caret line="15" selection-start-line="15" selection-end-line="15" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/it/alerighi/spider/Card.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1496">
-          <caret line="92" column="5" selection-start-line="92" selection-start-column="5" selection-end-line="92" selection-end-column="5" />
+        <state relative-caret-position="-4684">
+          <caret line="334" column="34" selection-start-line="334" selection-start-column="34" selection-end-line="334" selection-end-column="34" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
@@ -1089,24 +1136,11 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/it/alerighi/spider/Move.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="136">
-          <caret line="8" selection-start-line="8" selection-end-line="8" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/it/alerighi/spider/Main.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="408">
-          <caret line="28" column="18" selection-start-line="28" selection-start-column="18" selection-end-line="28" selection-end-column="18" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/it/alerighi/spider/GamePanel.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="453">
-          <caret line="596" column="40" lean-forward="true" selection-start-line="596" selection-start-column="40" selection-end-line="596" selection-end-column="40" />
+        <state relative-caret-position="243">
+          <caret line="47" column="15" selection-start-line="47" selection-start-column="15" selection-end-line="47" selection-end-column="15" />
           <folding>
-            <element signature="imports" expanded="true" />
+            <element signature="e#377#378#0" expanded="true" />
+            <element signature="e#410#411#0" expanded="true" />
           </folding>
         </state>
       </provider>

@@ -1,25 +1,20 @@
 package it.alerighi.spider;
 
 /**
- * Classe statica comprendente funzioni di utilità
+ * Utility class
  *
  * @author Alessandro Righi
  */
-public class Util {
+public enum Util {
+    ;
 
     /**
-     * Classe non instanziabile
-     */
-    private Util() {
-    }
-
-    /**
-     * Indica se è attiva la modalità debug
+     * Set true for debug mode
      */
     public static final boolean DEBUG = true;
 
     /**
-     * Indica se in esecuzione su un MAC
+     * True if the OS is MacOS
      */
     public static final boolean IS_MAC = System.getProperty("os.name").startsWith("Mac");
 
@@ -29,44 +24,49 @@ public class Util {
     }
 
     /**
-     * Logga un messaggio di informazione su standard output
+     * Log a info message
      *
-     * @param message messaggio di informazione da loggare
+     * @param message info message
      */
     public static void info(String message) {
         System.out.println("[Info] " + message);
     }
 
     /**
-     * Logga un messaggio di debug su standard output
+     * Log a debug message
      *
-     * @param message il messaggio da stampare
+     * @param message debug message
      */
     public static void debug(String message) {
         if (DEBUG)
             System.out.println("[Debug] " + message);
     }
 
-    public static void debug(String c, String message) {
-        debug(c + ": " + message);
+    /**
+     * Log a debug message
+     *
+     * @param where class name
+     * @param message message to debug
+     */
+    public static void debug(String where, String message) {
+        debug(where + ": " + message);
     }
 
     /**
-     * Logga un messaggio di warning su standard error
+     * Log a warning message
      *
-     * @param message messaggio di warning da loggare
+     * @param message warning message
      */
     public static void warn(String message) {
         System.err.println("[Warn] " + message);
     }
 
     /**
-     * Logga un messaggio di errore su standard error,
-     * quindi termina il programma con exit status 1
+     * Log a fatal error message, then terminate the program
      *
-     * @param message messaggio di errore da loggare
+     * @param message error message
      */
-    public static void err(String message) {
+    public static void die(String message) {
         System.err.println("[Err] " + message);
         System.exit(1);
     }

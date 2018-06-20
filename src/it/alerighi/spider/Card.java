@@ -75,7 +75,7 @@ public class Card {
             // carico l'immagine del dorsetto della carta
             back = ImageIO.read(Card.class.getResourceAsStream("back.png"));
         } catch (IOException e) {
-            err("Error loading card images!");
+            die("Error loading card images!");
         }
     }
 
