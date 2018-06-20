@@ -7,10 +7,13 @@ package it.alerighi.spider;
  */
 public final class Move {
 
-    public final MoveType moveType;
+    public static final int DEAL_CARDS = 0;
+    public static final int DECK_REMOVED = 1;
+    public static final int MOVE_DECK = 2;
 
-    public final int from;
+    public final int moveType;
     public final int to;
+    public final int from;
     public final int cards;
     public final int removedDeck;
     public final boolean visible;
@@ -21,7 +24,7 @@ public final class Move {
      * @return dealCards Move
      */
     public static Move dealCards() {
-        return new Move(MoveType.DEAL_CARDS, 0, 0, 0, 0, false);
+        return new Move(DEAL_CARDS, 0, 0, 0, 0, false);
     }
 
     /**
@@ -32,7 +35,7 @@ public final class Move {
      * @return removedDeck Move
      */
     public static Move deckRemoved(int index, boolean visible) {
-        return new Move(MoveType.DECK_REMOVED, 0, 0, 0, index, visible);
+        return new Move(DECK_REMOVED, 0, 0, 0, index, visible);
     }
 
     /**
@@ -45,10 +48,10 @@ public final class Move {
      * @return moveDeck Move
      */
     public static Move moveDeck(int from, int to, int numberOfCards, boolean visible) {
-        return new Move(MoveType.MOVE_DECK, from, to, numberOfCards, 0, visible);
+        return new Move(MOVE_DECK, from, to, numberOfCards, 0, visible);
     }
 
-    private Move(MoveType type, int from, int to, int cards, int removedDeck, boolean visible) {
+    private Move(int type, int from, int to, int cards, int removedDeck, boolean visible) {
         this.moveType = type;
         this.from = from;
         this.to = to;
@@ -68,11 +71,5 @@ public final class Move {
                 return "Removed deck from " + removedDeck + " with first card visible = " + visible;
         }
         return null;
-    }
-
-    public enum MoveType {
-        DEAL_CARDS,
-        DECK_REMOVED,
-        MOVE_DECK
     }
 }

@@ -5,46 +5,24 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Classe che rappresenta un mazzo di carte.
+ * Class that reppresent a game deck
  *
  * @author Alessandro Righi
  */
-public class Deck {
+public final class Deck {
 
-    /**
-     * spazio in pixel fra carte scoperte
-     */
     public static final int SPACE_BETWEEN_CARDS = 25;
-
-    /**
-     * spazio in pixel fra carte coperte
-     */
     public static final int SPACE_BETWEEN_CARDS_COVERED = 10;
 
-    /**
-     * posizone X del mazzo di carte
-     */
-    private int positionX;
-
-    /**
-     * posizione Y del mazzo di carte
-     */
-    private int positionY;
-
-    /**
-     * indice del mazzo di carte
-     */
+    private Point position;
     private int index;
 
-    /**
-     * Lista di carte presenti nel mazzo
-     */
     private final List<Card> cards;
 
     /**
-     * Crea un nuovo mazzo di carte
+     * Create a new card deck
      *
-     * @param list lista di carte da inserire nel mazzo
+     * @param list list of cards to insert in the deck
      */
     public Deck(List<Card> list) {
         cards = new ArrayList<>(list);
@@ -52,136 +30,130 @@ public class Deck {
     }
 
     /**
-     * Ritorna l'indice del mazzo
+     * Get the deck index
      *
-     * @return indice del mazzo
+     * @return deck index
      */
     public int getIndex() {
         return index;
     }
 
     /**
-     * Setta l'indice del mazzo
+     * Set the deck index
      *
-     * @param i indice del mazzo
+     * @param index indice del mazzo
      */
-    public void setIndex(int i) {
-        index = i;
+    public void setIndex(int index) {
+        this.index = index;
     }
 
     /**
-     * Ritorna la prima carta del mazzo, se esiste
+     * Get the first card of the deck
      *
-     * @return prima carta del mazzo se esiste, altrimenti null
+     * @return first card of the deck, null if deck is empty
      */
     public Card getFirstCard() {
         return cards.isEmpty() ? null : cards.get(0);
     }
 
     /**
-     * Ritorna la carta sopra i mazzo (più in basso), se esiste
+     * Get the top card of the deck
      *
-     * @return carta sopra il mazzo se esiste, altrimenti null
+     * @return top card of the deck, null if deck empty
      */
     public Card getTopCard() {
         return cards.isEmpty() ? null : cards.get(cards.size() - 1);
     }
 
     /**
-     * Disegna il mazzo di carte
+     * Draws the card deck in the specified position
      *
-     * @param graphics area grafica su cui disegnare
-     * @param x        coordinata x
-     * @param y        coordinata y
+     * @param graphics graphics area
+     * @param position deck position
      */
-    public void paint(Graphics graphics, int x, int y) {
-        setPosition(x, y);
+    public void paint(Graphics graphics, Point position) {
+        setPosition(position);
         if (cards.isEmpty()) {
             graphics.setColor(GamePanel.SCORE_BOX_COLOR);
-            graphics.fillRect(x, y, Card.WIDTH, Card.HEIGHT);
+            graphics.fillRect(position.x, position.y, Card.WIDTH, Card.HEIGHT);
             graphics.setColor(Color.BLACK);
-            graphics.drawRect(x, y, Card.WIDTH, Card.HEIGHT);
+            graphics.drawRect(position.x, position.y, Card.WIDTH, Card.HEIGHT);
         } else {
             for (Card card : cards) {
-                card.drawCard(graphics, x, y);
-                y += card.isVisible() ? SPACE_BETWEEN_CARDS : SPACE_BETWEEN_CARDS_COVERED;
+                card.paint(graphics, position);
+                position.translate(0, card.isVisible() ? SPACE_BETWEEN_CARDS : SPACE_BETWEEN_CARDS_COVERED);
             }
         }
     }
 
     /**
-     * Disegna il mazzo di carte
+     * Draws the card deck in the current position
      *
-     * @param graphics area grafica in cui disegnare il mazzo
+     * @param graphics graphics area
      */
     public void paint(Graphics graphics) {
-        paint(graphics, positionX, positionY);
+        paint(graphics, position);
     }
 
     /**
-     * Controlla se il mazzo è ordinato nell'intervallo n..numberOfCards()
+     * Check if the deck is ordered from an index to the bottom (so it can be moved)
      *
-     * @param n indice iniziale
-     * @return true se ordinato, flase altrimenti
+     * @param index start index
+     * @return true only if is ordered
      */
-    public boolean isOrderdered(int n) {
-        for (int i = n; i < cards.size() - 1; i++) {
-            if (cards.get(i).getSuit() != cards.get(i + 1).getSuit() ||
-                    cards.get(i).getValue() != cards.get(i + 1).getValue() + 1)
+    public boolean isOrderdered(int index) {
+        for (int i = index; i < cards.size() - 1; i++) {
+            if (cards.get(i).suit != cards.get(i + 1).suit ||
+                    cards.get(i).value != cards.get(i + 1).value + 1)
                 return false;
         }
         return true;
     }
 
     /**
-     * Ottiene un sottomazzo fra n e numberOfCards(), se questo è ordinato
+     * Get a subdeck from n to top, onby if it's ordered
      *
-     * @param n indice di partenza
-     * @param pop indica se rimuovere o meno le carte dal mazzo
-     * @return il sottomazzo se esiste, null altrimenti
+     * @param index starting index
+     * @param pop if true removes the subdeck from the deck
+     * @return the subdeck, if impossible to get null
      */
-    public Deck getSubDeck(int n, boolean pop) {
-        if (!isOrderdered(n))
+    public Deck getSubDeck(int index, boolean pop) {
+        if (!isOrderdered(index))
             return null;
-        Deck deck = new Deck(cards.subList(n, cards.size()));
+        Deck deck = new Deck(cards.subList(index, cards.size()));
         if (pop)
-            cards.subList(n, cards.size()).clear();
+            cards.subList(index, cards.size()).clear();
         return deck;
     }
 
     /**
-     * Setta la posizione del mazzo
+     * Get the subdeck from (x,y) and the end, if exists
      *
-     * @param x coordinata X
-     * @param y coordinata Y
-     */
-    public void setPosition(int x, int y) {
-        this.positionX = x;
-        this.positionY = y;
-    }
-
-    /**
-     * Ottiene il sottomazzo fra la posizione (x,y) e la fine, se esiste
+     * @param getPosition position
+     * @param pop if true also remove subdeck from deck
+     * @return the deck if exists, else null
      *
-     * @param a coordinata X
-     * @param b coordinata Y
-     * @param pop indica se rimuovere il mazzo, o meno
-     * @return il mazzo se esiste, null altrimenti
-     * TODO: riscrivere questo metodo
+     * TODO: rewrite this method
      */
-    public Deck selectSubDeck(int a, int b, boolean pop) {
+    public Deck selectSubDeck(Point getPosition, boolean pop) {
         if (cards.isEmpty()) {
-            if (a > positionX && a < positionX + Card.WIDTH && b > positionY && b < Card.HEIGHT + positionY)
+            if (getPosition.x > position.x
+                    && getPosition.x < position.x + Card.WIDTH
+                    && getPosition.y > position.y
+                    && getPosition.y < Card.HEIGHT + position.y)
                 return this;
             else
                 return null;
         }
-        int y = getTopCard().getPositionY();
-        int x = positionX;
+        int y = getTopCard().getPosition().y;
+        int x = position.x;
         int i;
         for (i = cards.size() - 1; i >= 0; i--) {
             Card card = cards.get(i);
-            if (a > x && a < x + Card.WIDTH && b > y && b < y + Card.HEIGHT && card.isVisible())
+            if (getPosition.x > x
+                    && getPosition.x < x + Card.WIDTH
+                    && getPosition.y > y
+                    && getPosition.y < y + Card.HEIGHT && card.isVisible())
                 break; /* found card */
             y -= card.isVisible() ? SPACE_BETWEEN_CARDS : SPACE_BETWEEN_CARDS_COVERED;
         }
@@ -190,94 +162,74 @@ public class Deck {
         Deck deck = getSubDeck(i, pop);
         if (deck == null)
             return null;
-        deck.setPosition(x, y);
+        deck.setPosition(new Point(x, y));
         deck.setIndex(index);
         return deck;
     }
 
     /**
-     * Rimuove il sottomazzo fra la posizione (x,y) e la fine, se esiste
+     * Set deck positoin
      *
-     * @param x coordinata X
-     * @param y coordinata Y
-     * @return il sottomazzo se esiste, null altrimenti
+     * @param position new position
      */
-    public Deck popSubDeck(int x, int y) {
-        return selectSubDeck(x, y, true);
+    public void setPosition(Point position) {
+        this.position = new Point(position);
     }
 
     /**
-     * Ritorna il sottomazzo fra la posizione (x,y) e la fine, se esiste, senza rimuoverlo dal mazzo
+     * Get X coordinate
      *
-     * @param x coordinata X
-     * @param y coordinata Y
-     * @return il sottomazzo se esiste, null altrimenti
+     * @return position
      */
-    public Deck selectSubDeck(int x, int y) {
-        return selectSubDeck(x, y, false);
+    public Point getPosition() {
+        return new Point(position);
     }
 
     /**
-     * Ottiene la posizione X del mazzo
+     * Get the card at the specified index
      *
-     * @return posizone X del mazzo
-     */
-    public int getPositionX() {
-        return positionX;
-    }
-
-    /**
-     * Ottiene la posizione Y del mazzo
-     *
-     * @return posizione Y del mazzo
-     */
-    public int getPositionY() {
-        return positionY;
-    }
-
-    /**
-     * Ottiene la carta con l'indice specificato
-     *
-     * @param index indice della carta
-     * @return carta con l'indice specificato
+     * @param index index of the card
+     * @return card
      */
      public Card getCardByIndex(int index) {
          return cards.get(index);
      }
 
     /**
-     * Ottiene quante carte sono presenti nel mazzo
+     * Get the number of cards in the deck
      *
-     * @return numero di carte nel mazzo
+     * @return number of card in the deck
      */
     public int numberOfCards() {
         return cards.size();
     }
 
     /**
-     * Indica se il mazzo è vuoto o meno
+     * Check if the deck is empty
      *
-     * @return true se il mazzo è vuoto, false altrimenti
+     * @return true only if deck is empty
      */
     public boolean isEmpty() {
         return cards.isEmpty();
     }
 
     /**
-     * Aggiunge una carta al mazzo
+     * Add a card to the deck
      *
-     * @param card carta da aggiungere al mazzo
+     * @param card card to add
      */
     public void addCard(Card card) {
         cards.add(card);
     }
 
     /**
-     * Aggiunge un mazzo alla fine del mazzo
+     * Add a deck at the end of the deck
      *
-     * @param deck mazzo da aggiungere
+     * @param deck deck to add
      */
     public void appendDeck(Deck deck) {
+        if (deck == null)
+            return;
         cards.addAll(deck.cards);
     }
 }

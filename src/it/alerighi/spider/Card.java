@@ -7,60 +7,26 @@ import java.io.IOException;
 import static it.alerighi.spider.Util.*;
 
 /**
- * Classe che rappresenta una carta da gioco.
+ * Class that represent a card
  *
  * @author Alessandro Righi
  */
-public class Card {
+public final class Card {
 
-    /**
-     * card HEIGHT
-     */
     public static final int HEIGHT = 145;
-
-    /**
-     * card WIDTH
-     */
     public static final int WIDTH = 100;
 
-    /**
-     * array dei nomi dei semi
-     */
     private static final String[] SUITS = {"spades", "hearts", "clubs", "diamonds"};
-
-    /**
-     * array dei valori delle carte
-     */
     private static final String[] VALUES = {"ace", "2", "3", "4", "5", "6", "7", "8", "9", "10", "jack", "queen", "king"};
 
-    /**
-     * immagini delle carte
-     */
     private static Image[] cardsImages = new Image[52];
-
-    /**
-     * immagine del retro di una carta
-     */
     private static Image back;
 
-    /**
-     * valore della carta, da 0 a 52
-     */
-    private final int value;
+    public final int value;
+    public final int suit;
 
-    /**
-     * posizione X della carta su schermo
-     */
-    private int positionX;
+    private Point position = new Point(0, 0);
 
-    /**
-     * posizione Y della carta su schermo
-     */
-    private int positionY;
-
-    /**
-     * indica se la carta è visibile o coperta
-     */
     private boolean isVisible;
 
     static {
@@ -80,137 +46,80 @@ public class Card {
     }
 
     /**
-     * Costruttore di una carta
+     * Card constructor
      *
-     * @param suit valore del seme (0-3)
-     * @param value valore numerico della carta (1-11)
+     * @param suit suit value (0-3)
+     * @param value card value (1-11)
      */
     public Card(int suit, int value) {
         if (value < 1 || value > 13 || suit < 0 || suit > 3) {
             throw new IllegalArgumentException("Suit or value out of bounds!");
         }
-        this.value = suit * 13 + value - 1;
+        this.suit = suit;
+        this.value = value;
     }
 
     /**
-     * Metodo statico che disegna il retro di una carta alla posizione specificata
+     * Draws the card back
      *
-     * @param x coordinata X dove disegnare
-     * @param y coordinata Y dove disegnare
+     * @param position position
      * @param graphics l'oggetto grafico su cui disegnare
      */
-    public static void drawCardBack(int x, int y, Graphics graphics) {
-        graphics.drawImage(back, x, y, WIDTH, HEIGHT, null);
+    public static void drawCardBack(Point position, Graphics graphics) {
+        graphics.drawImage(back, position.x, position.y, WIDTH, HEIGHT, null);
     }
 
     /**
-     * Metodo che disegna una carta nell'area grafica specificata
-     *
-     * @param graphics l'area grafica su cui disegnare
-     */
-    public void drawCard(Graphics graphics) {
-        drawCard(graphics, positionX, positionY);
-    }
-
-    /**
-     * Imposta la posizione della carta a quella specificata, e la disegna
+     * Set the position of the specified card, and draws it
      *
      * @param graphics area grafica in cui disegnare la carta
-     * @param x coordinata X
-     * @param y coordinata Y
+     * @param position position of the card
      */
-    public void drawCard(Graphics graphics, int x, int y) {
-        setPosition(x, y);
+    public void paint(Graphics graphics, Point position) {
+        setPosition(position);
         if (isVisible) {
-            graphics.drawImage(cardsImages[value], x, y, WIDTH, HEIGHT, null);
+            graphics.drawImage(cardsImages[suit * 13 + value - 1], position.x, position.y, WIDTH, HEIGHT, null);
         } else {
-            drawCardBack(x, y, graphics);
+            drawCardBack(position, graphics);
         }
     }
 
     @Override
     public String toString() {
-        return getValueAsString() + " of " + getSuitAsString();
+        return SUITS[suit] + " of " + VALUES[value - 1];
     }
 
     /**
-     * Ottiene la posizione X della carta
+     * Get the card position
      *
-     * @return posizione X della carta
+     * @return card position
      */
-    public int getPositionX() {
-        return positionX;
+    public Point getPosition() {
+        return new Point(position);
     }
 
     /**
-     * Ottiene la posizione Y della carta
+     * Set the card position
      *
-     * @return posizione Y della carta
+     * @param position new position
      */
-    public int getPositionY() {
-        return positionY;
+    public void setPosition(Point position) {
+        this.position = new Point(position);
     }
 
     /**
-     * Setta la posizione della carta
+     * Check if the card is visible
      *
-     * @param x coordinata X
-     * @param y coordinata Y
-     */
-    public void setPosition(int x, int y) {
-        this.positionX = x;
-        this.positionY = y;
-    }
-
-    /**
-     * Ottiene il seme della carta
-     *
-     * @return seme della carta
-     */
-    public int getSuit() {
-        return this.value / 13;
-    }
-
-    /**
-     * Ottiene il seme della carta come stringa
-     *
-     * @return seme della carta come stringa
-     */
-    public String getSuitAsString() {
-        return SUITS[getSuit()];
-    }
-
-    /**
-     * Ottiene il valore della carta
-     *
-     * @return valore della carta
-     */
-    public int getValue() {
-        return this.value % 13 + 1;
-    }
-
-    /**
-     * Ottiene il valore della carta come stringa
-     *
-     * @return valore della carta come stringa
-     */
-    public String getValueAsString() {
-        return VALUES[getValue() - 1];
-    }
-
-    /**
-     * Ritorna true se la carta è visibile
-     *
-     * @return true se la carta è visibile
+     * @return true only if visible
      */
     public boolean isVisible() {
         return isVisible;
     }
 
     /**
-     * Setta la carta visibile in base al valore specificato
+     * Set card visibility
      *
-     * @param val true setta la carta visibile, false la nasconde
+     * @param val visibility
      */
     public void setVisible(boolean val) {
         this.isVisible = val;

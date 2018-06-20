@@ -14,10 +14,10 @@ import static it.alerighi.spider.Util.*;
  */
 public final class Spider extends JFrame {
 
-    public static final String VERSION = "1.0.0";
-    public static final String NAME = "Spider";
+    public static final String APPLICATION_VERSION = "1.0.0";
+    public static final String APPLICATION_NAME = "Spider";
 
-    private static final String WIN_TITLE = NAME + " v" + VERSION;
+    private static final String WIN_TITLE = APPLICATION_NAME + " v" + APPLICATION_VERSION;
     private static final int WIN_WIDTH = 1500;
     private static final int WIN_HEIGHT = 800;
     private static final Image WIN_ICON_IMAGE;
@@ -123,5 +123,4 @@ public final class Spider extends JFrame {
         menuBar.add(gameMenu);
         return menuBar;
     }
-
 }
