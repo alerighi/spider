@@ -4,8 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.lang.reflect.Method;
 
-import static it.alerighi.spider.Util.info;
-import static it.alerighi.spider.Util.warn;
+import static it.alerighi.spider.Util.*;
 
 /**
  * Classe Main dell'applicazione
@@ -20,11 +19,6 @@ public class Main {
     private Main() {}
 
     /**
-     * indica se in esecuzione su un MAC
-     */
-    public static final boolean IS_MAC = System.getProperty("os.name").startsWith("Mac");
-
-    /**
      * Entry point del programma
      *
      * @param args argomenti da riga di comando
@@ -32,7 +26,7 @@ public class Main {
     public static void main(String args[]) {
         info("This is " + Spider.NAME + " version " + Spider.VERSION);
 
-        if (IS_MAC) {
+        if (Util.IS_MAC) {
             /* proprietà necessarie per la barra dei menù in macOS */
             System.setProperty("apple.awt.application.name", Spider.NAME);
             System.setProperty("apple.laf.useScreenMenuBar", "true");

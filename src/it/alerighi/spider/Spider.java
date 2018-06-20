@@ -5,7 +5,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
 
-import static it.alerighi.spider.Util.err;
+import static it.alerighi.spider.Util.*;
 
 /**
  * Finestra principale del programma
@@ -23,6 +23,7 @@ public class Spider extends JFrame {
      * nome dell'applicazione
      */
     public static final String NAME = "Spider";
+
     /**
      * icona del gioco
      */
@@ -43,7 +44,13 @@ public class Spider extends JFrame {
      */
     private static final int WIN_HEIGHT = 800;
 
+    /**
+     * oggetto che rappresenta il pannello di gioco
+     */
+    private GamePanel gamePanel = new GamePanel();
+
     static {
+        debug("Spider", "static initializing class");
         Image img = null;
         try {
             img = ImageIO.read(Spider.class.getResourceAsStream("spider.png"));
@@ -54,14 +61,10 @@ public class Spider extends JFrame {
     }
 
     /**
-     * oggetto che rappresenta il pannello di gioco
-     */
-    private GamePanel gamePanel = new GamePanel();
-
-    /**
      * Costruttore di una finestra gioco spider
      */
     public Spider() {
+        debug("Spider", "creating main Window");
         setTitle(TITLE);
         setSize(WIN_WIDTH, WIN_HEIGHT);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -77,6 +80,7 @@ public class Spider extends JFrame {
      * Mostra il dialogo che consente di selezionare la modalità di gioco
      */
     private void showNewGameDialog() {
+        debug("Spider", "prompting game mode selection");
         final String[] GAME_MODES = {
                 "1 suit  (easy)",
                 "2 suits (medium)",
@@ -88,6 +92,7 @@ public class Spider extends JFrame {
         if (selection == null)
             System.exit(0);
         int suits = Character.getNumericValue(selection.charAt(0));
+        debug("Spider", "starting new game with " + suits + " suits");
         gamePanel.startNewGame(suits);
     }
 
@@ -99,7 +104,7 @@ public class Spider extends JFrame {
     private JMenuBar buildMenuBar() {
         JMenuBar menuBar = new JMenuBar();
 
-        if (!Main.IS_MAC) {
+        if (!Util.IS_MAC) {
             JMenu fileMenu = new JMenu("File");
 
             fileMenu.addSeparator();

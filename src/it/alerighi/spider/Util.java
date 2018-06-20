@@ -6,13 +6,22 @@ package it.alerighi.spider;
  * @author Alessandro Righi
  */
 public class Util {
+
+    /**
+     * Classe non instanziabile
+     */
     private Util() {
     }
 
     /**
-     * indica se è attiva la modalità debug
+     * Indica se è attiva la modalità debug
      */
-    private static final boolean DEBUG = true;
+    public static final boolean DEBUG = true;
+
+    /**
+     * Indica se in esecuzione su un MAC
+     */
+    public static final boolean IS_MAC = System.getProperty("os.name").startsWith("Mac");
 
     static {
         if (DEBUG)
@@ -20,26 +29,30 @@ public class Util {
     }
 
     /**
-     * Logga un messaggio di informazione
+     * Logga un messaggio di informazione su standard output
      *
      * @param message messaggio di informazione da loggare
      */
     public static void info(String message) {
         System.out.println("[Info] " + message);
-
     }
 
     /**
-     * Logga un messaggio di debug
+     * Logga un messaggio di debug su standard output
      *
+     * @param message il messaggio da stampare
      */
     public static void debug(String message) {
         if (DEBUG)
             System.out.println("[Debug] " + message);
     }
 
+    public static void debug(String c, String message) {
+        debug(c + ": " + message);
+    }
+
     /**
-     * Logga un messaggio di warning
+     * Logga un messaggio di warning su standard error
      *
      * @param message messaggio di warning da loggare
      */
@@ -48,7 +61,8 @@ public class Util {
     }
 
     /**
-     * Logga un messaggio di errore, quindi termina il programma
+     * Logga un messaggio di errore su standard error,
+     * quindi termina il programma con exit status 1
      *
      * @param message messaggio di errore da loggare
      */

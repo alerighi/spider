@@ -9,28 +9,37 @@ import java.util.List;
  *
  * @author Alessandro Righi
  */
-public class Deck extends ArrayList<Card> {
+public class Deck {
 
     /**
      * spazio in pixel fra carte scoperte
      */
     public static final int SPACE_BETWEEN_CARDS = 25;
+
     /**
      * spazio in pixel fra carte coperte
      */
     public static final int SPACE_BETWEEN_CARDS_COVERED = 10;
+
     /**
      * posizone X del mazzo di carte
      */
     private int positionX;
+
     /**
      * posizione Y del mazzo di carte
      */
     private int positionY;
+
     /**
      * indice del mazzo di carte
      */
     private int index;
+
+    /**
+     * Lista di carte presenti nel mazzo
+     */
+    private final List<Card> cards;
 
     /**
      * Crea un nuovo mazzo di carte
@@ -38,7 +47,7 @@ public class Deck extends ArrayList<Card> {
      * @param list lista di carte da inserire nel mazzo
      */
     public Deck(List<Card> list) {
-        super(list);
+        cards = new ArrayList<>(list);
         getTopCard().setVisible(true);
     }
 
@@ -66,7 +75,7 @@ public class Deck extends ArrayList<Card> {
      * @return prima carta del mazzo se esiste, altrimenti null
      */
     public Card getFirstCard() {
-        return size() > 0 ? get(0) : null;
+        return cards.isEmpty() ? null : cards.get(0);
     }
 
     /**
@@ -75,9 +84,7 @@ public class Deck extends ArrayList<Card> {
      * @return carta sopra il mazzo se esiste, altrimenti null
      */
     public Card getTopCard() {
-        if (size() > 0)
-            return this.get(size() - 1);
-        return null;
+        return cards.isEmpty() ? null : cards.get(cards.size() - 1);
     }
 
     /**
@@ -89,15 +96,14 @@ public class Deck extends ArrayList<Card> {
      */
     public void paint(Graphics graphics, int x, int y) {
         setPosition(x, y);
-        if (isEmpty()) {
+        if (cards.isEmpty()) {
             graphics.setColor(GamePanel.SCORE_BOX_COLOR);
             graphics.fillRect(x, y, Card.WIDTH, Card.HEIGHT);
             graphics.setColor(Color.BLACK);
             graphics.drawRect(x, y, Card.WIDTH, Card.HEIGHT);
         } else {
-            for (Card card : this) {
-                card.setPosition(x, y);
-                card.drawCard(graphics);
+            for (Card card : cards) {
+                card.drawCard(graphics, x, y);
                 y += card.isVisible() ? SPACE_BETWEEN_CARDS : SPACE_BETWEEN_CARDS_COVERED;
             }
         }
@@ -113,22 +119,22 @@ public class Deck extends ArrayList<Card> {
     }
 
     /**
-     * Controlla se il mazzo è ordinato nell'intervallo n..size()
+     * Controlla se il mazzo è ordinato nell'intervallo n..numberOfCards()
      *
      * @param n indice iniziale
      * @return true se ordinato, flase altrimenti
      */
     public boolean isOrderdered(int n) {
-        for (int i = n; i < size() - 1; i++) {
-            if (get(i).getSuit() != get(i + 1).getSuit() ||
-                    get(i).getValue() != get(i + 1).getValue() + 1)
+        for (int i = n; i < cards.size() - 1; i++) {
+            if (cards.get(i).getSuit() != cards.get(i + 1).getSuit() ||
+                    cards.get(i).getValue() != cards.get(i + 1).getValue() + 1)
                 return false;
         }
         return true;
     }
 
     /**
-     * Ottiene un sottomazzo fra n e size(), se questo è ordinato
+     * Ottiene un sottomazzo fra n e numberOfCards(), se questo è ordinato
      *
      * @param n indice di partenza
      * @param pop indica se rimuovere o meno le carte dal mazzo
@@ -137,9 +143,9 @@ public class Deck extends ArrayList<Card> {
     public Deck getSubDeck(int n, boolean pop) {
         if (!isOrderdered(n))
             return null;
-        Deck deck = new Deck(this.subList(n, size()));
+        Deck deck = new Deck(cards.subList(n, cards.size()));
         if (pop)
-            this.removeRange(n, size());
+            cards.subList(n, cards.size()).clear();
         return deck;
     }
 
@@ -164,19 +170,19 @@ public class Deck extends ArrayList<Card> {
      * TODO: riscrivere questo metodo
      */
     public Deck selectSubDeck(int a, int b, boolean pop) {
-        if (this.size() == 0) {
+        if (cards.isEmpty()) {
             if (a > positionX && a < positionX + Card.WIDTH && b > positionY && b < Card.HEIGHT + positionY)
                 return this;
             else
                 return null;
         }
-        int y = this.getTopCard().getPositionY();
-        int x = this.positionX;
+        int y = getTopCard().getPositionY();
+        int x = positionX;
         int i;
-        for (i = size() - 1; i >= 0; i--) {
-            Card card = this.get(i);
+        for (i = cards.size() - 1; i >= 0; i--) {
+            Card card = cards.get(i);
             if (a > x && a < x + Card.WIDTH && b > y && b < y + Card.HEIGHT && card.isVisible())
-                break;
+                break; /* found card */
             y -= card.isVisible() ? SPACE_BETWEEN_CARDS : SPACE_BETWEEN_CARDS_COVERED;
         }
         if (i < 0)
@@ -227,6 +233,52 @@ public class Deck extends ArrayList<Card> {
      */
     public int getPositionY() {
         return positionY;
+    }
+
+    /**
+     * Ottiene la carta con l'indice specificato
+     *
+     * @param index indice della carta
+     * @return carta con l'indice specificato
+     */
+     public Card getCardByIndex(int index) {
+         return cards.get(index);
+     }
+
+    /**
+     * Ottiene quante carte sono presenti nel mazzo
+     *
+     * @return numero di carte nel mazzo
+     */
+    public int numberOfCards() {
+        return cards.size();
+    }
+
+    /**
+     * Indica se il mazzo è vuoto o meno
+     *
+     * @return true se il mazzo è vuoto, false altrimenti
+     */
+    public boolean isEmpty() {
+        return cards.isEmpty();
+    }
+
+    /**
+     * Aggiunge una carta al mazzo
+     *
+     * @param card carta da aggiungere al mazzo
+     */
+    public void addCard(Card card) {
+        cards.add(card);
+    }
+
+    /**
+     * Aggiunge un mazzo alla fine del mazzo
+     *
+     * @param deck mazzo da aggiungere
+     */
+    public void appendDeck(Deck deck) {
+        cards.addAll(deck.cards);
     }
 }
 

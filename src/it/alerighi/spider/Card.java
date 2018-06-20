@@ -4,8 +4,7 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.io.IOException;
 
-import static it.alerighi.spider.Util.err;
-import static it.alerighi.spider.Util.info;
+import static it.alerighi.spider.Util.*;
 
 /**
  * Classe che rappresenta una carta da gioco.
@@ -44,43 +43,41 @@ public class Card {
      */
     private static Image back;
 
-    static {
-        info("Loading images from resource files...");
-        try {
-            /* carico le immagini delle carte normali nell'array cardsImages */
-            int i = 0;
-            for (String suit : SUITS) {
-                for (String value : VALUES) {
-                    cardsImages[i] = ImageIO.read(Card.class.getResourceAsStream(value + "_of_" + suit + ".png"));
-                    i++;
-                }
-            }
-
-            // carico l'immagine del dorsetto della carta
-            back = ImageIO.read(Card.class.getResourceAsStream("back.png"));
-        } catch (IOException e) {
-            err("Errore nel caricamento immagini delle carte!");
-        }
-
-        info("Done loading card images");
-    }
-
     /**
      * valore della carta, da 0 a 52
      */
     private final int value;
+
     /**
      * posizione X della carta su schermo
      */
     private int positionX;
+
     /**
      * posizione Y della carta su schermo
      */
     private int positionY;
+
     /**
      * indica se la carta è visibile o coperta
      */
-    private boolean isVisible = false;
+    private boolean isVisible;
+
+    static {
+        debug("Card", "loading images from resource files...");
+        try {
+            /* carico le immagini delle carte normali nell'array cardsImages */
+            int i = 0;
+            for (String suit : SUITS)
+                for (String value : VALUES)
+                    cardsImages[i++] = ImageIO.read(Card.class.getResourceAsStream(value + "_of_" + suit + ".png"));
+
+            // carico l'immagine del dorsetto della carta
+            back = ImageIO.read(Card.class.getResourceAsStream("back.png"));
+        } catch (IOException e) {
+            err("Error loading card images!");
+        }
+    }
 
     /**
      * Costruttore di una carta
@@ -112,10 +109,22 @@ public class Card {
      * @param graphics l'area grafica su cui disegnare
      */
     public void drawCard(Graphics graphics) {
+        drawCard(graphics, positionX, positionY);
+    }
+
+    /**
+     * Imposta la posizione della carta a quella specificata, e la disegna
+     *
+     * @param graphics area grafica in cui disegnare la carta
+     * @param x coordinata X
+     * @param y coordinata Y
+     */
+    public void drawCard(Graphics graphics, int x, int y) {
+        setPosition(x, y);
         if (isVisible) {
-            graphics.drawImage(cardsImages[value], positionX, positionY, WIDTH, HEIGHT, null);
+            graphics.drawImage(cardsImages[value], x, y, WIDTH, HEIGHT, null);
         } else {
-            drawCardBack(positionX, positionY, graphics);
+            drawCardBack(x, y, graphics);
         }
     }
 
