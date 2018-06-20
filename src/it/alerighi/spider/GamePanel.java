@@ -591,11 +591,11 @@ public class GamePanel extends JPanel {
         @Override
         public void keyPressed(KeyEvent keyEvent) {
             if (!moves.isEmpty()
-                    && (keyEvent.getModifiers() & Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()) != 0
+                    && (keyEvent.getModifiersEx() & Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx()) != 0
                     && keyEvent.getKeyCode() == KeyEvent.VK_Z)
                 undoLastMove();
             if (!possibleMoves.isEmpty()
-                    && (keyEvent.getModifiers() & Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()) != 0
+                    && (keyEvent.getModifiersEx() & Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx()) != 0
                     && keyEvent.getKeyCode() == KeyEvent.VK_H)
                 getHint();
         }
