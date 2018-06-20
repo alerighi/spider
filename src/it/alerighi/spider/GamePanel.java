@@ -10,105 +10,97 @@ import java.util.Stack;
 import static it.alerighi.spider.Util.*;
 
 /**
- * Classe che gestisce il pannello del gioco
+ * Classe that handles the game logic
+ *
+ * TODO: separate class into smaller classes
  *
  * @author Alessandro Righi
  */
 public class GamePanel extends JPanel {
 
-    /**
-     * colore dello sfondo del gioco (verdino)
-     */
     public static final Color BACKGROUND_COLOR = new Color(35, 104, 32);
-
-    /**
-     * colore dello sfondo del riquadro punteggi (verdino più scuro)
-     */
     public static final Color SCORE_BOX_COLOR = new Color(33, 79, 33);
-
-    /**
-     * colore con cui sono evidenziate le carte dei suggerimenti
-     */
     public static final Color HINT_COLOR = new Color(10, 27, 50);
 
     /**
-     * array dei 10 mazzi superiori del gioco
+     * Array of the top 10 decks of the game
      */
     private Deck[] topDecks = new Deck[10];
 
     /**
-     * array dei 5 mazzi di carte extra da distribuire durente il gioco
+     * Array of the decks of cards to deal
      */
     private Card[][] decks = new Card[5][10];
 
     /**
-     * numero di deck di carte da distribuire rimanenti
+     * number of remaining decks to distribute [0, 5]
      */
     private int remainingDecks;
 
     /**
-     * deck di carte che il giocatore sta spostando
+     * deck that the player is moving (if any)
      */
     private Deck draggingDeck = null;
 
     /**
-     * deck completati e rimossi dal gioco
+     * completed and removed decks
      */
     private Stack<Deck> removedDecks = new Stack<>();
 
     /**
-     * lista delle mosse effettuate dal giocatore
+     * stack of moves done by the player
      */
     private Stack<Move> moves = new Stack<>();
 
     /**
-     * punteggio di gioco
+     * game score
      */
     private int score;
 
     /**
-     * lista delle mosse possibili da effettuare
+     * list of possible valid moves
      */
     private List<Move> possibleMoves;
 
     /**
-     * numero di semi del gioco
+     * number of suits of the game
      */
     private int numberOfSuits;
 
     /**
-     * indica l'offset X del mazzetto che si trascina
+     * indicate the offset X of the moving deck
+     *
+     * TODO: this doesn't belong here
      */
     private int offsetX;
 
     /**
-     * indica l'offset Y del mazzetto che si trascina
+     * indicate the offset Y of the moving deck
+     *
+     * TODO: this doesn't belong here
      */
     private int offsetY;
 
     /**
-     * indica se la carta sopra il mazzetto prima del trascinamento era visibile
+     * Indicate if the upper card is visible or not
+     *
+     * TODO: this doesn't belong here
      */
     private boolean visible;
 
-    /**
-     * Costruttore di un nuovo pannello di gioco
-     */
     public GamePanel() {
-        debug("GamePanel", "initializing game panel");
-        debug("GamePanel", "initializing game panel");
         addMouseListener(new GameMouseListener());
         addMouseMotionListener(new GameMouseMotionListener());
         addKeyListener(new GameKeyListener());
         setFocusable(true);
         requestFocus();
-        new Card(1, 1);
+        new Card(1, 1); // this is done to trigger static initialization of the Card class
     }
 
     /**
-     * Avvia un nuovo gioco con il numero di semi specificato
+     * Start a new game
      *
-     * @param numberOfSuits numero di semi del gioco
+     * @param numberOfSuits number of suits of the game
      */
     public void startNewGame(int numberOfSuits) {
         debug("GamePanel","Starting new game with " + numberOfSuits);
@@ -123,10 +115,9 @@ public class GamePanel extends JPanel {
     }
 
     /**
-     * Inizializza i vari deck di carte per il gioco
+     * Initializes card decks
      */
     private void buildDecks() {
-        debug("GamePanel", "building card decks");
         CardDeck cardDeck = new CardDeck(numberOfSuits, 8 / numberOfSuits);
 
         for (int i = 0; i < 5; i++) {
@@ -145,9 +136,9 @@ public class GamePanel extends JPanel {
     }
 
     /**
-     * Disegna l'area del punteggio e il pulsante UNDO
+     * Draws the score area and the UNDO button
      *
-     * @param graphics area grafica in cui disegnare
+     * @param graphics graphics area
      */
     private void drawScoreArea(Graphics2D graphics) {
         int x = getWidth() / 2 - 125;
@@ -179,11 +170,11 @@ public class GamePanel extends JPanel {
     }
 
     /**
-     * Controlla se la posizione specificata si trova nel riquadro di UNDO
+     * Check if the specified position is in the UNDO area
      *
-     * @param x coordinata X da controllare
-     * @param y coordinata Y da controllare
-     * @return true se (x,y) in UNDO, false altrimenti
+     * @param x X
+     * @param y Y
+     * @return true only if (x,y) is UNDO
      */
     private boolean isInUndoBox(int x, int y) {
         int startX = ((getWidth() / 2) - 125 + getWidth()) / 2;
@@ -194,11 +185,11 @@ public class GamePanel extends JPanel {
     }
 
     /**
-     * Controlla se la posizione specificata si trova nel riguardo punteggio
+     * Check if the specified position is in the score area
      *
-     * @param x coordinata X da controllare
-     * @param y coordinata Y da controllare
-     * @return true se (x,y) in riquadro punteggi, false altrimenti
+     * @param x X
+     * @param y Y
+     * @return true only if (x,y) is in score area
      */
     private boolean isInScoreBox(int x, int y) {
         return x > getWidth() / 2 - 125
@@ -208,9 +199,9 @@ public class GamePanel extends JPanel {
     }
 
     /**
-     * Disegna il mazzo extra in basso a destra
+     * Draw the decks of cards to deal in the lower right corner
      *
-     * @param graphics area grafica in cui disegnare
+     * @param graphics graphics area
      */
     void drawExtraDecks(Graphics2D graphics) {
         if (remainingDecks == 0) {
@@ -225,9 +216,9 @@ public class GamePanel extends JPanel {
     }
 
     /**
-     * Disegna i mazzi di carte
+     * Draw the upper decks
      *
-     * @param graphics area grafica in cui disegnare
+     * @param graphics graphics area
      */
     void drawCardDecks(Graphics2D graphics) {
         int spaceBetweenCards = (getWidth() - 10 * Card.WIDTH) / 11;
@@ -246,9 +237,9 @@ public class GamePanel extends JPanel {
     }
 
     /**
-     * Disegna il campo di gioco
+     * Draws the game area
      *
-     * @param g area grafica in cui disegnare
+     * @param g graphics area
      */
     @Override
     protected void paintComponent(Graphics g) {
@@ -271,11 +262,12 @@ public class GamePanel extends JPanel {
     }
 
     /**
-     * Prende un sottomazzo nella posizione attuale del mouse, e lo rimuove dal mazzo
+     * Gets a subdeck from the current mouse position if present,
+     * and removes it from the game area.
      *
-     * @param x coordinata X
-     * @param y coordinata Y
-     * @return sottomazzo nella posizione del mouse se esiste, null altrimenti
+     * @param x X
+     * @param y Y
+     * @return subdeck if present, else null
      */
     private Deck popDeckOnLocation(int x, int y) {
         Deck deck = null;
@@ -287,11 +279,11 @@ public class GamePanel extends JPanel {
     }
 
     /**
-     * Seleziona un sottomazzo nella posizione attuale del mouse, e NON lo rimuove dal mazzo
+     * Select a subdeck from the current mouse position if present.
      *
-     * @param x coordinata X
-     * @param y coordinata Y
-     * @return sottomazzo nella posizione del mouse se esiste, null altrimenti
+     * @param x X
+     * @param y Y
+     * @return subdeck if present, else null
      */
     private Deck selectDeckOnLocation(int x, int y) {
         Deck deck = null;
@@ -303,18 +295,20 @@ public class GamePanel extends JPanel {
     }
 
     /**
-     * Controlla se una mossa è valida (?)
+     * Check if a move is valid. A move is valid if the lower card
+     * have a value that is equal to the value of the upper card - 1,
+     * if exists.
      *
-     * @param card1 carta inferiore
-     * @param card2 carta superiore
-     * @return true se la mossa è valida, false altrimenti
+     * @param upperCard upper card
+     * @param lowerCard lower card
+     * @return true only if the move is valid
      */
-    private boolean validMove(Card card1, Card card2) {
-        return card1 == null || card1.getValue() == card2.getValue() + 1;
+    private boolean validMove(Card upperCard, Card lowerCard) {
+        return upperCard == null || upperCard.getValue() - lowerCard.getValue() == 1;
     }
 
     /**
-     * distribuisce le carte da uno dei mazzi inferiori
+     * Deal cards
      */
     public void dealCards() {
         if (remainingDecks <= 0)
@@ -339,18 +333,18 @@ public class GamePanel extends JPanel {
     }
 
     /**
-     * Indica se il gioco è finito o meno
+     * Indicate if the game is ended (all decks removed)
      *
-     * @return true se il gico è terminato, false altrimenti
+     * @return true only if the game is ended
      */
     public boolean isEnded() {
         return removedDecks.size() == 8;
     }
 
     /**
-     * Ottiene una lista di possibili mosse
+     * Get a list of possible moves
      *
-     * @return lista di possibili mosse
+     * @return list of possible moves
      */
     private List<Move> getPossibleMoves() {
         List<Move> badMoves = new ArrayList<>();
@@ -372,7 +366,7 @@ public class GamePanel extends JPanel {
     }
 
     /**
-     * Mostra un suggerimento di gioco
+     * Get game hint
      */
     public void getHint() {
         if (possibleMoves.isEmpty())
@@ -415,7 +409,7 @@ public class GamePanel extends JPanel {
     }
 
     /**
-     * Annulla l'ultima mossa
+     * Undo last move
      */
     private void undoLastMove() {
         if (moves.empty())
@@ -451,7 +445,7 @@ public class GamePanel extends JPanel {
     }
 
     /**
-     * Controlla se è possibile rimuovere un mazzetto
+     * Check if is possible to remove a deck and if it is remove it
      */
     private void checkAndRemoveDecks() {
         for (int j = 0; j < 10; j++) {
@@ -481,7 +475,9 @@ public class GamePanel extends JPanel {
     }
 
     /**
-     * Classe per gestire gli eventi del mouse
+     * Class to handle mouse events
+     *
+     * TODO: move it in another file ?
      */
     private class GameMouseListener implements MouseListener {
 
@@ -562,7 +558,9 @@ public class GamePanel extends JPanel {
     }
 
     /**
-     * Classe per gestire gli eventi di movimento del mouse
+     * Class to handle mouse movement
+     *
+     * TODO: move it in another file ?
      */
     private class GameMouseMotionListener implements MouseMotionListener {
 
@@ -585,7 +583,9 @@ public class GamePanel extends JPanel {
     }
 
     /**
-     * Classe per gestire gi eventi della tastiera
+     * Classe to handle key events
+     *
+     * TODO: move it in another file ?
      */
     private class GameKeyListener implements KeyListener {
 
