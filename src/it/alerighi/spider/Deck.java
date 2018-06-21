@@ -132,7 +132,10 @@ public final class Deck {
     }
 
     private int getCardIndexFromLocation(Point location) {
-        int y = getTopCard().getPosition().y;
+        Card topCard = getTopCard();
+        if (topCard == null)
+            return -1;
+        int y = topCard.getPosition().y;
         int x = position.x;
         for (int i = cards.size() - 1; i >= 0; i--) {
             Card card = cards.get(i);
