@@ -203,7 +203,7 @@
     </panes>
   </component>
   <component name="PropertiesComponent">
-    <property name="SearchEverywhereHistoryKey" value="push&#9;ACTION&#9;Vcs.Push&#10;build arti&#9;ACTION&#9;BuildArtifact&#10;artifacts&#9;ACTION&#9;BuildArtifact&#10;suppress&#9;ACTION&#9;SuppressFixes&#10;optimize impo&#9;ACTION&#9;OptimizeImports&#10;build art&#9;ACTION&#9;BuildArtifact&#10;reformat&#9;ACTION&#9;ShowReformatFileDialog&#10;format&#9;ACTION&#9;ReformatCode&#10;uml&#9;ACTION&#9;ShowUmlDiagram" />
+    <property name="SearchEverywhereHistoryKey" value="build arti&#9;ACTION&#9;BuildArtifact&#10;push&#9;ACTION&#9;Vcs.Push&#10;artifacts&#9;ACTION&#9;BuildArtifact&#10;suppress&#9;ACTION&#9;SuppressFixes&#10;optimize impo&#9;ACTION&#9;OptimizeImports&#10;build art&#9;ACTION&#9;BuildArtifact&#10;reformat&#9;ACTION&#9;ShowReformatFileDialog&#10;format&#9;ACTION&#9;ReformatCode&#10;uml&#9;ACTION&#9;ShowUmlDiagram" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
     <property name="js-jscs-nodeInterpreter" value="/usr/local/bin/node" />
