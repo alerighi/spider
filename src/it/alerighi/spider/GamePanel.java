@@ -25,7 +25,7 @@ public final class GamePanel extends JPanel {
     private Deck[] topDecks = new Deck[10];
 
     /**
-     * Array of the decks of cards to deal
+     * Array of the decks of numberOfCards to deal
      */
     private Card[][] decks = new Card[5][10];
 
@@ -57,7 +57,7 @@ public final class GamePanel extends JPanel {
     /**
      * list of possible valid moves
      */
-    private List<Move.MoveDeckMove> possibleMoves;
+    private List<MoveDeckMove> possibleMoves;
 
     /**
      * number of suits of the game
@@ -157,7 +157,7 @@ public final class GamePanel extends JPanel {
     }
 
     /**
-     * Draw the decks of cards to deal in the lower right corner
+     * Draw the decks of numberOfCards to deal in the lower right corner
      *
      * @param graphics graphics area
      */
@@ -251,7 +251,7 @@ public final class GamePanel extends JPanel {
     }
 
     /**
-     * Deal cards
+     * Deal numberOfCards
      */
     public void dealCards() {
         if (remainingDecks <= 0)
@@ -269,7 +269,7 @@ public final class GamePanel extends JPanel {
             decks[remainingDecks][i].setVisible(true);
             topDecks[i].addCard(decks[remainingDecks][i]);
         }
-        moves.add(new Move.DealCardsMove());
+        moves.add(new DealCardsMove());
         checkAndRemoveDecks();
         possibleMoves = getPossibleMoves();
         repaint();
@@ -291,8 +291,8 @@ public final class GamePanel extends JPanel {
      * <p>
      * TODO: this method is shit
      */
-    private List<Move.MoveDeckMove> getPossibleMoves() {
-        LinkedList<Move.MoveDeckMove> moves = new LinkedList<>();
+    private List<MoveDeckMove> getPossibleMoves() {
+        LinkedList<MoveDeckMove> moves = new LinkedList<>();
         for (int i = 0; i < 10; i++) {
             Deck deck = topDecks[i];
             for (int j = 0; j < deck.numberOfCards(); j++) {
@@ -301,7 +301,7 @@ public final class GamePanel extends JPanel {
                     for (int a = 0; a < 10; a++) {
                         Card topCard = topDecks[a].getTopCard();
                         if (i != a && validMove(topCard, bottomCard)) {
-                            Move.MoveDeckMove move = new Move.MoveDeckMove(i, a, deck.numberOfCards() - j, false);
+                            MoveDeckMove move = new MoveDeckMove(i, a, deck.numberOfCards() - j, false);
                             if (topCard == null || topCard.suit == bottomCard.suit)
                                 moves.addFirst(move);
                             else
@@ -322,7 +322,7 @@ public final class GamePanel extends JPanel {
         if (possibleMoves.isEmpty())
             return; /* no possibile moves */
         try {
-            Move.MoveDeckMove move = possibleMoves.remove(0);
+            MoveDeckMove move = possibleMoves.remove(0);
             possibleMoves.add(move);
 
             Graphics2D g = (Graphics2D) getGraphics();
@@ -333,8 +333,8 @@ public final class GamePanel extends JPanel {
             g.setStroke(highWidthStroke);
 
             Deck deck = topDecks[move.from];
-            Card card = deck.getCardByIndex(deck.numberOfCards() - move.cards);
-            g.drawRect(card.getPosition().x, card.getPosition().y, Card.WIDTH, Card.HEIGHT + move.cards * Deck.SPACE_BETWEEN_CARDS - Deck.SPACE_BETWEEN_CARDS);
+            Card card = deck.getCardByIndex(deck.numberOfCards() - move.numberOfCards);
+            g.drawRect(card.getPosition().x, card.getPosition().y, Card.WIDTH, Card.HEIGHT + move.numberOfCards * Deck.SPACE_BETWEEN_CARDS - Deck.SPACE_BETWEEN_CARDS);
 
             Thread.sleep(400);
             g.setStroke(oldStroke);
@@ -358,13 +358,13 @@ public final class GamePanel extends JPanel {
         }
     }
 
-    private void undoMoveDeck(Move.MoveDeckMove toUndo) {
+    private void undoMoveDeck(MoveDeckMove toUndo) {
         score -= 1;
         Deck from = topDecks[toUndo.to];
         Deck to = topDecks[toUndo.from];
         if (!toUndo.visible && to.getTopCard() != null)
             to.getTopCard().setVisible(false);
-        Deck toMove = from.getSubDeck(from.numberOfCards() - toUndo.cards, true);
+        Deck toMove = from.getSubDeck(from.numberOfCards() - toUndo.numberOfCards, true);
         to.appendDeck(toMove);
         repaint();
     }
@@ -381,7 +381,7 @@ public final class GamePanel extends JPanel {
         repaint();
     }
 
-    private void undoDeckRemoved(Move.RemoveDeckMove toUndo) {
+    private void undoDeckRemoved(RemoveDeckMove toUndo) {
         if (!toUndo.visible) {
             Card topCard = topDecks[toUndo.index].getTopCard();
             if (topCard != null)
@@ -398,12 +398,12 @@ public final class GamePanel extends JPanel {
         if (moves.empty())
             return;
         Move toUndo = moves.pop();
-        if (toUndo instanceof Move.RemoveDeckMove)
-            undoDeckRemoved((Move.RemoveDeckMove) toUndo);
-        if (toUndo instanceof Move.DealCardsMove)
+        if (toUndo instanceof RemoveDeckMove)
+            undoDeckRemoved((RemoveDeckMove) toUndo);
+        if (toUndo instanceof DealCardsMove)
             undoDealCards();
-        if (toUndo instanceof Move.MoveDeckMove)
-            undoMoveDeck((Move.MoveDeckMove) toUndo);
+        if (toUndo instanceof MoveDeckMove)
+            undoMoveDeck((MoveDeckMove) toUndo);
     }
 
     /**
@@ -419,7 +419,7 @@ public final class GamePanel extends JPanel {
                 if (c.isVisible() && c.value == 13 && d.isOrderdered(i)) {
                     /* trovato mazzetto removibile */
                     removedDecks.push(d.getSubDeck(i, true));
-                    moves.push(new Move.RemoveDeckMove(j, d.numberOfCards() <= 0 || d.getTopCard().isVisible()));
+                    moves.push(new RemoveDeckMove(j, d.numberOfCards() <= 0 || d.getTopCard().isVisible()));
                     Card c2 = d.getTopCard();
                     if (c2 != null)
                         c2.setVisible(true); /* rende visibile la carta superiore sotto il mazzetto rimosso */
@@ -504,26 +504,20 @@ public final class GamePanel extends JPanel {
 
             if (draggingDeck != null) {
                 Deck deck = selectDeckOnLocation(mouseEvent.getPoint(), false);
-                if (deck != null) {
-                    deck = topDecks[deck.getIndex()];
-                    if (validMove(deck.getTopCard(), draggingDeck.getFirstCard())) {
-                        Card c = topDecks[draggingDeck.getIndex()].getTopCard();
-                        if (c != null)
-                            c.setVisible(true); /* scopre la carta sopra il mazzo vecchio da cui si trascina */
+                if (deck != null && validMove(topDecks[deck.getIndex()].getTopCard(), draggingDeck.getFirstCard())) {
+                        Card card = topDecks[draggingDeck.getIndex()].getTopCard();
+                        if (card != null)
+                            card.setVisible(true); /* set card under moved deck visible */
                         deck.appendDeck(draggingDeck);
-                        Move m = new Move.MoveDeckMove(draggingDeck.getIndex(), deck.getIndex(), draggingDeck.numberOfCards(), visible);
-                        moves.push(m);
-                        repaint();
+                        moves.push(new MoveDeckMove(draggingDeck.getIndex(), deck.getIndex(), draggingDeck.numberOfCards(), visible));
                         checkAndRemoveDecks();
                         possibleMoves = getPossibleMoves();
                         score -= 1;
-                        draggingDeck = null;
-                        return;
-                    }
+                } else {
+                    topDecks[draggingDeck.getIndex()].appendDeck(draggingDeck);
                 }
-                topDecks[draggingDeck.getIndex()].appendDeck(draggingDeck);
-                draggingDeck = null;
             }
+            draggingDeck = null;
             repaint();
         }
 
@@ -579,4 +573,33 @@ public final class GamePanel extends JPanel {
         public void keyReleased(KeyEvent keyEvent) {
         }
     }
+
+    private static abstract class Move {}
+
+    private static final class DealCardsMove extends Move {}
+
+    private static final class RemoveDeckMove extends Move {
+        public final int index;
+        public final boolean visible;
+
+        public RemoveDeckMove(int index, boolean visible) {
+            this.index = index;
+            this.visible = visible;
+        }
+    }
+
+    private static final class MoveDeckMove extends Move {
+        public final int to;
+        public final int from;
+        public final int numberOfCards;
+        public final boolean visible;
+
+        public MoveDeckMove(int from, int to, int numberOfCards, boolean visible) {
+            this.to = to;
+            this.from = from;
+            this.numberOfCards = numberOfCards;
+            this.visible = visible;
+        }
+    }
+
 }

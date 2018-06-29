@@ -112,7 +112,7 @@ public final class Spider extends JFrame {
 
         gameMenu.addSeparator();
 
-        JMenuItem itemSaveGame = new JMenuItem("Deal cards");
+        JMenuItem itemSaveGame = new JMenuItem("Deal numberOfCards");
         itemSaveGame.addActionListener(a -> gamePanel.dealCards());
         gameMenu.add(itemSaveGame);
 

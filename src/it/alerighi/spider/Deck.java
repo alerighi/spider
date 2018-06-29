@@ -25,7 +25,7 @@ public final class Deck {
     /**
      * Create a new card deck
      *
-     * @param list list of cards to insert in the deck
+     * @param list list of numberOfCards to insert in the deck
      */
     public Deck(List<Card> list) {
         cards = new ArrayList<>(list);
@@ -214,7 +214,7 @@ public final class Deck {
     }
 
     /**
-     * Get the number of cards in the deck
+     * Get the number of numberOfCards in the deck
      *
      * @return number of card in the deck
      */
