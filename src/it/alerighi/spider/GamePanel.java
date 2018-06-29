@@ -505,6 +505,7 @@ public final class GamePanel extends JPanel {
             if (draggingDeck != null) {
                 Deck deck = selectDeckOnLocation(mouseEvent.getPoint(), false);
                 if (deck != null && validMove(topDecks[deck.getIndex()].getTopCard(), draggingDeck.getFirstCard())) {
+                        deck = topDecks[deck.getIndex()];
                         Card card = topDecks[draggingDeck.getIndex()].getTopCard();
                         if (card != null)
                             card.setVisible(true); /* set card under moved deck visible */

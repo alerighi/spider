@@ -253,5 +253,14 @@ public final class Deck {
             return;
         cards.addAll(deck.cards);
     }
+
+    @Override
+    public String toString() {
+        StringBuilder stringBuilder = new StringBuilder();
+        for (Card card : cards) {
+            stringBuilder.append(card.toString());
+        }
+        return stringBuilder.toString();
+    }
 }
 

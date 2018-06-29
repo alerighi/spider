@@ -21,14 +21,13 @@ public final class Spider extends JFrame {
     public static final String APPLICATION_NAME = "Spider";
 
     private static final String WIN_TITLE = APPLICATION_NAME + " v" + APPLICATION_VERSION;
-    private static final int WIN_WIDTH = 1500;
-    private static final int WIN_HEIGHT = 800;
+    private static final int DEFAULT_WIN_WIDTH = 1500;
+    private static final int DEFAULT_WIN_HEIGHT = 800;
     private static final Image WIN_ICON_IMAGE;
 
     private final GamePanel gamePanel = new GamePanel();
 
     static {
-        /* load game icon image */
         Image img = null;
         try {
             img = ImageIO.read(Spider.class.getResourceAsStream("spider.png"));
@@ -40,20 +39,21 @@ public final class Spider extends JFrame {
 
     public Spider() {
         setTitle(WIN_TITLE);
-        setSize(WIN_WIDTH, WIN_HEIGHT);
+        setSize(DEFAULT_WIN_WIDTH, DEFAULT_WIN_HEIGHT);
         setIconImage(WIN_ICON_IMAGE);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setJMenuBar(buildMenuBar());
         setContentPane(gamePanel);
         setLocationRelativeTo(null);
         setVisible(true);
-        showNewGameDialog();
+        if (!showNewGameDialog())
+            System.exit(0);
     }
 
     /**
      * Show new game dialog
      */
-    private void showNewGameDialog() {
+    private boolean showNewGameDialog() {
         logger.info("prompting game mode selection");
         final String[] GAME_MODES = {
                 "1 suit  (easy)",
@@ -64,10 +64,11 @@ public final class Spider extends JFrame {
         String selection = (String) JOptionPane.showInputDialog(null, "Choose game difficulty",
                 "New Game", JOptionPane.PLAIN_MESSAGE, null, GAME_MODES, GAME_MODES[2]);
         if (selection == null)
-            System.exit(0);
+            return false;
         int suits = Character.getNumericValue(selection.charAt(0));
         logger.info("starting new game with " + suits + " suits");
         gamePanel.startNewGame(suits);
+        return true;
     }
 
     /**
@@ -92,22 +93,10 @@ public final class Spider extends JFrame {
 
         JMenu gameMenu = new JMenu("Game");
 
-        JMenuItem menuNewGame = new JMenu("New Game");
+        JMenuItem itemNewGame = new JMenuItem("New Game");
+        itemNewGame.addActionListener(a -> showNewGameDialog());
 
-        JMenuItem itemOneSuit = new JMenuItem("One suit");
-        itemOneSuit.addActionListener(a -> gamePanel.startNewGame(1));
-        menuNewGame.add(itemOneSuit);
-
-        JMenuItem itemTwoSuits = new JMenuItem("Two suits");
-        itemTwoSuits.addActionListener(a -> gamePanel.startNewGame(2));
-        menuNewGame.add(itemTwoSuits);
-
-        JMenuItem itemFourSuits = new JMenuItem("Four suits");
-        itemFourSuits.addActionListener(a -> gamePanel.startNewGame(4));
-        menuNewGame.add(itemFourSuits);
-
-        gameMenu.add(menuNewGame);
-
+        gameMenu.add(itemNewGame);
         gameMenu.addSeparator();
 
         JMenuItem itemSaveGame = new JMenuItem("Deal numberOfCards");
